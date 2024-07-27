@@ -121,7 +121,7 @@ export default [
     id: 'configuration',
     title: 'Cấu hình hệ thống',
     icon: <Settings size={12} />,
-    navLink: '/apps/manage/permissions',
+    navLink: '/apps/manage/permissions_',
     action: 'read',
     resource: 'CHUC_NANG',
     role: 0

@@ -603,6 +603,9 @@ const ListRoles = () => {
               expandable={{
                 expandedRowRender: (record) => <PermissModal
                   roleSelected={record} />,
+                // expandedRowRender: (record) => {
+                //   console.log(record)
+                // },
                 rowExpandable: (record) => record.name !== 'Not Expandable',
                 // expandRowByClick: true
               }}
