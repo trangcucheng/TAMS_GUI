@@ -1,5 +1,5 @@
-import { FileOutlined, MenuOutlined, UnorderedListOutlined, MoneyCollectOutlined, BookOutlined, ScheduleOutlined } from '@ant-design/icons'
-import { Mail, MessageSquare, CheckSquare, Calendar, FileText, Circle, ShoppingCart, User, Shield, Users, Airplay, Columns, Settings, Bold, Bell, Aperture, Home, Book, Grid, Menu } from 'react-feather'
+import { FileOutlined, MenuOutlined, UnorderedListOutlined, MoneyCollectOutlined, BookOutlined, ScheduleOutlined, ApartmentOutlined, CheckOutlined, DiffOutlined } from '@ant-design/icons'
+import { Mail, MessageSquare, CheckSquare, Calendar, FileText, Circle, ShoppingCart, User, Shield, Users, Airplay, Columns, Settings, Bold, Bell, Aperture, Home, Book, Grid, Menu, UserPlus, Sliders } from 'react-feather'
 
 export default [
   {
@@ -21,125 +21,112 @@ export default [
     // role: 0
   },
   {
+    header: "Tài liệu",
+    role: 0
+  },
+  {
     id: 'document',
-    title: 'Tài liệu',
-    icon: <FileText size={20} />,
-    children: [
-      {
-        id: 'data',
-        title: 'QL kho tài liệu mẫu',
-        icon: <Circle size={12} />,
-        navLink: '/tams/document',
-        action: 'read',
-        resource: 'QL_KHO_TAI_LIEU_MAU'
-      },
-    ],
+    title: 'QL kho tài liệu mẫu',
+    icon: <FileText size={12} />,
+    navLink: '/tams/document',
+    action: 'read',
+    resource: 'QL_KHO_TAI_LIEU_MAU',
     role: 0
   },
   {
-    id: 'check-document',
+    header: "Kiểm tra tài liệu",
+    role: 0
+  },
+  {
+    id: 'course',
+    title: 'Đợt kiểm tra',
+    icon: <DiffOutlined size={12} />,
+    navLink: '/tams/course',
+    action: 'read',
+    resource: 'DOT_KIEM_TRA',
+    role: 0
+  },
+  {
+    id: 'checking-document',
     title: 'Kiểm tra tài liệu',
-    icon: <FileText size={20} />,
-    children: [
-      {
-        id: 'course',
-        title: 'Đợt kiểm tra',
-        icon: <Calendar size={20} />,
-        navLink: '/tams/course',
-        action: 'read',
-        resource: 'DOT_KIEM_TRA'
-      },
-      {
-        id: 'checking-document',
-        title: 'Kiểm tra tài liệu',
-        icon: <Clipboard size={20} />,
-        navLink: '/tams/checking-document',
-        action: 'read',
-        resource: 'KIEM_TRA_TAI_LIEU'
-      },
-    ],
+    icon: <CheckOutlined size={12} />,
+    navLink: '/tams/checking-document',
+    action: 'read',
+    resource: 'KIEM_TRA_TAI_LIEU',
     role: 0
   },
   {
-    id: 'categories',
-    title: 'Quản lý danh mục',
-    icon: <MenuOutlined size={20} />,
-    children: [
-      {
-        id: 'document-type',
-        title: 'Loại tài liệu',
-        icon: <Book size={20} />,
-        navLink: '/tams/document-type',
-        action: 'read',
-        resource: 'LOAI_TAI_LIEU'
-      },
-      {
-        id: 'major',
-        title: 'Lĩnh vực',
-        icon: <Grid size={20} />,
-        navLink: '/tams/major',
-        action: 'read',
-        resource: 'LINH_VUC'
-      },
-      {
-        id: 'organization',
-        title: 'Đơn vị',
-        icon: <Menu size={20} />,
-        navLink: '/tams/organization',
-        action: 'read',
-        resource: 'DON_VI'
-      },
-    ],
+    header: "Quản lý danh mục",
     role: 0
   },
   {
-    id: 'roles-permissions',
-    title: 'Roles & Permissions',
-    icon: <Users size={20} />,
-    children: [
-      {
-        id: 'permissions',
-        title: 'QL Tài khoản',
-        icon: <Circle size={12} />,
-        navLink: '/apps/manage/accounts',
-        action: 'read',
-        resource: 'TAI_KHOAN'
-      },
-      {
-        id: 'role',
-        title: 'Vai trò, phân quyền',
-        icon: <Circle size={12} />,
-        navLink: '/apps/manage/roles',
-        action: 'read',
-        resource: 'PHAN_QUYEN_VAI_TRO'
-      },
-      {
-        id: 'permissions',
-        title: 'QL các quyền cơ bản',
-        icon: <Circle size={12} />,
-        navLink: '/apps/manage/permissions',
-        action: 'read',
-        resource: 'CHUC_NANG'
-      },
-      // {
-      //   id: 'groupuser',
-      //   title: 'Quản lý nhóm người dùng',
-      //   icon: <Circle size={12} />,
-      //   navLink: '/apps/manage/groupusers',
-      //   action: 'read',
-      //   resource: 'NHOM_NGUOI_DUNG'
-      // },
-      // {
-      //   id: 'users',
-      //   title: 'Quản lý danh sách người dùng',
-      //   icon: <Circle size={12} />,
-      //   navLink: '/apps/manage/users1',
-      //   action: 'read',
-      //   resource: 'NGUOI_DUNG'
-      // },
-    ],
+    id: 'document-type',
+    title: 'Loại tài liệu',
+    icon: <BookOutlined size={12} />,
+    navLink: '/tams/document-type',
+    action: 'read',
+    resource: 'LOAI_TAI_LIEU',
     role: 0
   },
+  {
+    id: 'major',
+    title: 'Lĩnh vực',
+    icon: <Sliders size={12} />,
+    navLink: '/tams/major',
+    action: 'read',
+    resource: 'LINH_VUC',
+    role: 0
+  },
+  {
+    id: 'organization',
+    title: 'Đơn vị',
+    icon: <ApartmentOutlined size={12} />,
+    navLink: '/tams/organization',
+    action: 'read',
+    resource: 'DON_VI',
+    role: 0
+  },
+  {
+    header: "Quản lý hệ thống",
+    role: 0
+  },
+  {
+    id: 'permissions',
+    title: 'QL Tài khoản',
+    icon: <Users size={12} />,
+    navLink: '/apps/manage/accounts',
+    action: 'read',
+    resource: 'TAI_KHOAN',
+    role: 0
+  },
+  {
+    id: 'role',
+    title: 'Vai trò, phân quyền',
+    icon: <Users size={12} />,
+    navLink: '/apps/manage/roles',
+    action: 'read',
+    resource: 'PHAN_QUYEN_VAI_TRO',
+    role: 0
+  },
+  {
+    id: 'permissions',
+    title: 'QL các quyền cơ bản',
+    icon: <UserPlus size={12} />,
+    navLink: '/apps/manage/permissions',
+    action: 'read',
+    resource: 'CHUC_NANG',
+    role: 0
+  },
+  {
+    id: 'configuration',
+    title: 'Cấu hình hệ thống',
+    icon: <Settings size={12} />,
+    navLink: '/apps/manage/permissions',
+    action: 'read',
+    resource: 'CHUC_NANG',
+    role: 0
+  }
+
 
   // {
   //   id: 'permissions',
@@ -246,30 +233,6 @@ export default [
   //   ],
   //   role: 0
   // },
-  {
-    id: 'configuration',
-    title: 'Cấu hình hệ thống',
-    icon: <MenuOutlined size={20} />,
-    children: [
-      {
-        id: 'provinece',
-        title: 'Cấu hình định dạng tệp tin',
-        icon: <Circle size={12} />,
-        navLink: '/cauhinhhethong/file',
-        action: 'read',
-        resource: 'FILE'
-      },
-      {
-        id: 'thamso',
-        title: 'Cấu hình tham số cập nhật, báo cáo dữ liệu',
-        icon: <Circle size={12} />,
-        navLink: '/cauhinhhethong/thamso',
-        action: 'read',
-        resource: 'THAMSOCAPNHAT'
-      }
-    ],
-    role: 0
-  },
 
   // {
   //   id: 'config',

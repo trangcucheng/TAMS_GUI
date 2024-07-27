@@ -78,7 +78,7 @@ export default [
   {
     id: 'role',
     title: 'Vai trò, phân quyền',
-    icon: <UserCheck size={20} />,
+    icon: <Users size={20} />,
     navLink: '/tams/role',
     role: 0
   },

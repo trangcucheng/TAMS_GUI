@@ -10,7 +10,7 @@ import uiElements from "./ui-elements"
 // import usersManage from "./users-manage"
 import categories from "./categories"
 import base from "./base"
-import tams from "./tams"
+// import tams from "./tams"
 // ** Merge & Export
 export default [
   ...base,
@@ -22,5 +22,5 @@ export default [
   ...tables,
   ...charts,
   ...others,
-  ...tams
+  // ...tams
 ]
