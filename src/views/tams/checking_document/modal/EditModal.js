@@ -27,6 +27,8 @@ import { useEffect, useState } from "react"
 import { detailCheckingDocument, editCheckingDocument } from "../../../../api/checking_document"
 import { getCourse } from "../../../../api/course"
 import classNames from "classnames"
+import { detailCheckingDocumentVersion, editCheckingDocumentVersion, getCheckingDocumentVersion } from "../../../../api/checking_document_version"
+import { PAGE_DEFAULT, PER_PAGE_DEFAULT } from "../../../../utility/constant"
 
 const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
     // ** States
@@ -47,11 +49,13 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
     })
 
     const [listCourse, setListCourse] = useState([])
+    const [listCheckingDocumentVersion, setListCheckingDocumentVersion] = useState([])
 
     const getAllDataPromises = async () => {
-        const coursePromise = getCourse({ params: { page: 1, perPage: 10, search: '' } })
+        const coursePromise = getCourse({ params: { page: PAGE_DEFAULT, perPage: PER_PAGE_DEFAULT, search: '' } })
+        const checkingDocumentVersionPromise = detailCheckingDocument(infoEdit?.id)
 
-        const promises = [coursePromise]
+        const promises = [coursePromise, checkingDocumentVersionPromise]
         const results = await Promise.allSettled(promises)
         const responseData = promises.reduce((acc, promise, index) => {
             if (results[index].status === 'fulfilled') {
@@ -63,6 +67,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
         }, [])
 
         const courseRes = responseData[0]
+        const checkingDocumentVersionRes = responseData[1]
         results.map((res) => {
             if (res.status !== 'fulfilled') {
                 setListCourse(null)
@@ -74,8 +79,11 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
                 label: `${res.name}`
             }
         })
+        const checkingDocumentVersions = checkingDocumentVersionRes?.data?.checkingDocumentVersion
+        setListCheckingDocumentVersion(checkingDocumentVersions)
         setListCourse(courses)
     }
+
 
     const handleCloseModal = () => {
         handleModal()
@@ -95,6 +103,11 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
             description: data.description
         }).then(result => {
             if (result.status === 'success') {
+                const id = listCheckingDocumentVersion[listCheckingDocumentVersion.length - 1]?.id
+                editCheckingDocumentVersion(id, {
+                    checkingDocumentId: infoEdit?.id,
+                    description: data.description
+                })
                 Swal.fire({
                     title: "Cập nhật kiểm tra tài liệu thành công",
                     text: "Yêu cầu đã được phê duyệt!",
@@ -106,7 +119,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
             } else {
                 Swal.fire({
                     title: "Cập nhật kiểm tra tài liệu thất bại",
-                    text: "Vui lòng thử lại sau!",
+                    text: "Vui lòng kiểm tra lại thông tin!",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger"

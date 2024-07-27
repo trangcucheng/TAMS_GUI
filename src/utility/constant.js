@@ -259,3 +259,6 @@ export const FAKE_PLAN_WEEK = [
 ]
 
 export const WEEK_DAYS = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"]
+
+export const PER_PAGE_DEFAULT = 100
+export const PAGE_DEFAULT = 1
