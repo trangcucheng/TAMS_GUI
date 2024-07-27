@@ -14,13 +14,13 @@ import tams from "./tams"
 // ** Merge & Export
 export default [
   ...base,
-  //   ...usersManage,
-  ...apps,
-  ...pages,
-  ...uiElements,
-  ...forms,
-  ...tables,
-  ...charts,
-  ...others,
+  // //   ...usersManage,
+  // ...apps,
+  // ...pages,
+  // ...uiElements,
+  // ...forms,
+  // ...tables,
+  // ...charts,
+  // ...others,
   ...tams
 ]

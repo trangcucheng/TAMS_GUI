@@ -29,6 +29,7 @@ import PrivateRoute from '@components/routes/PrivateRoute'
 
 // ** Utils
 import { isObjEmpty } from '@utils'
+import TamsRoutes from './Tams'
 
 const getLayout = {
     blank: <BlankLayout />,
@@ -56,7 +57,8 @@ const Routes = [
     ...ChartsRoutes,
     ...UsersManageRoutes,
     ...CategoriesRoutes,
-    ...DashboardRoutes
+    ...DashboardRoutes,
+    ...TamsRoutes
 ]
 
 const getRouteMeta = route => {

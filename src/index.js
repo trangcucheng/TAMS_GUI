@@ -48,6 +48,7 @@ import "./@core/scss/core.scss"
 import "./@core/assets/fonts/feather/iconfont.css"
 import "./assets/scss/style.scss"
 import "@styles/base/pages/app-ecommerce.scss"
+import "./assets/scss/index.module.scss"
 import { ConfigProvider } from "antd"
 import viVN from "antd/lib/locale/vi_VN"
 
