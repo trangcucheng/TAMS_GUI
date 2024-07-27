@@ -399,3 +399,28 @@ export const getFridaysInMonth = (month, year) => {
 
   return fridays
 }
+
+export const toDateTimeString = date => {
+  const today = new Date(date)
+  const hh = String(today.getHours()).padStart(2, "0")
+  const MM = String(today.getMinutes()).padStart(2, "0")
+  const dd = String(today.getDate()).padStart(2, "0")
+  const mm = String(today.getMonth() + 1).padStart(2, "0")
+  const yyyy = today.getFullYear()
+
+  return `${hh}:${MM} ${dd}/${mm}/${yyyy}`
+}
+
+export const convertDateString = (dateString) => {
+  const date = new Date(dateString)
+  return date
+}
+
+export const toDateStringv2 = date => {
+  const today = new Date(date)
+  const dd = String(today.getDate()).padStart(2, "0")
+  const mm = String(today.getMonth() + 1).padStart(2, "0")
+  const yyyy = today.getFullYear()
+
+  return `${yyyy}-${mm}-${dd}`
+}
