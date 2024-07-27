@@ -25,6 +25,10 @@ import classnames from "classnames"
 import { AbilityContext } from '@src/utility/context/Can'
 import { deleteDocument, getDocument } from "../../../api/document"
 import { toDateString, toDateTimeString } from "../../../utility/Utils"
+import { getCourse } from "../../../api/course"
+import { getDocumentType } from "../../../api/document_type"
+import { getMajor } from "../../../api/major"
+import { type } from "jquery"
 
 const Document = () => {
     const ability = useContext(AbilityContext)
@@ -34,15 +38,75 @@ const Document = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [search, setSearch] = useState("")
+    const [courseId, setCourseId] = useState()
+    const [typeId, setTypeId] = useState()
+    const [majorId, setMajorId] = useState()
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
-    const getData = (page, limit, search) => {
+
+    const [listCourse, setListCourse] = useState([])
+    const [listDocumentType, setListDocumentType] = useState([])
+    const [listMajor, setListMajor] = useState([])
+
+    const getAllDataPromises = async () => {
+        const coursePromise = getCourse({ params: { page: 1, perPage: 10, search: '' } })
+        const documentTypePromise = getDocumentType({ params: { page: 1, perPage: 10, search: '' } })
+        const majorPromise = getMajor({ params: { page: 1, perPage: 10, search: '' } })
+
+        const promises = [coursePromise, documentTypePromise, majorPromise]
+        const results = await Promise.allSettled(promises)
+        const responseData = promises.reduce((acc, promise, index) => {
+            if (results[index].status === 'fulfilled') {
+                acc[index] = results[index].value
+            } else {
+                acc[index] = { error: results[index].reason }
+            }
+            return acc
+        }, [])
+
+        const courseRes = responseData[0]
+        const documentTypeRes = responseData[1]
+        const majorRes = responseData[2]
+        results.map((res) => {
+            if (res.status !== 'fulfilled') {
+                setListCourse(null)
+                setListDocumentType(null)
+                setListMajor(null)
+            }
+        })
+        const courses = courseRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        const documentTypes = documentTypeRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        const majors = majorRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        setListCourse(courses)
+        setListDocumentType(documentTypes)
+        setListMajor(majors)
+    }
+
+    const getData = (page, limit, search, course, type, major) => {
         getDocument({
             params: {
                 page,
                 perPage: limit,
                 ...(search && search !== "" && { search }),
+                courseId: course,
+                typeId: type,
+                majorId: major
             },
         })
             .then((res) => {
@@ -55,8 +119,9 @@ const Document = () => {
             })
     }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search)
-    }, [currentPage, rowsPerPage, search])
+        getData(currentPage, rowsPerPage, search, courseId, typeId, majorId)
+        getAllDataPromises()
+    }, [currentPage, rowsPerPage, search, courseId, typeId, majorId])
 
 
     const handleModal = () => {
@@ -101,6 +166,31 @@ const Document = () => {
                 console.log(error)
             })
     }
+
+    const handleChangeCourse = (value) => {
+        if (value) {
+            setCourseId(value.value)
+            setCurrentPage(1)
+        }
+        setCourseId()
+    }
+
+    const handleChangeDocumentType = (value) => {
+        if (value) {
+            setTypeId(value.value)
+            setCurrentPage(1)
+        }
+        setTypeId()
+    }
+
+    const handleChangeMajor = (value) => {
+        if (value) {
+            setMajorId(value.value)
+            setCurrentPage(1)
+        }
+        setMajorId()
+    }
+
     const columns = [
         {
             title: "STT",
@@ -218,7 +308,33 @@ const Document = () => {
                         }}
                     />
                 </Col>
-                <Col sm="7" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Select
+                        placeholder="Chọn khóa học"
+                        className='mb-50 select-custom'
+                        options={listCourse} isClearable
+                        onChange={(value) => handleChangeCourse(value)}
+                    />
+                </Col>
+                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Select
+                        placeholder="Chọn loại tài liệu"
+                        className='mb-50 select-custom'
+                        options={listDocumentType}
+                        isClearable
+                        onChange={(value) => handleChangeDocumentType(value)}
+                    />
+                </Col>
+                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Select
+                        placeholder="Chọn chuyên ngành"
+                        className='mb-50 select-custom'
+                        options={listMajor}
+                        isClearable
+                        onChange={(value) => handleChangeMajor(value)}
+                    />
+                </Col>
+                <Col sm="2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
                         onClick={(e) => setIsAdd(true)}
                         color="primary"

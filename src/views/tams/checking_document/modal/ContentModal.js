@@ -49,7 +49,7 @@ import { deleteCheckingDocumentVersion, getCheckingDocumentVersion } from "../..
 import { detailCheckingDocument } from "../../../../api/checking_document"
 import EditCheckingDocumentVersion from "./EditVersionModal"
 
-const VersionModal = ({ checkingDocumentSelected }) => {
+const ContentModal = ({ checkingDocumentSelected }) => {
     const navigate = useNavigate()
     const MySwal = withReactContent(Swal)
     const [listPerGroup, setListPerGroup] = useState([])
@@ -257,19 +257,19 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             ),
         },
         {
-            title: "Tên tài liệu",
+            title: "Nội dung",
             dataIndex: "fileName",
             align: "left",
             width: 500,
         },
         {
-            title: "Phiên bản",
+            title: "Thứ tự trong VB kiểm tra",
             dataIndex: "version",
             align: "center",
             width: 100,
         },
         {
-            title: "Phần trăm trùng",
+            title: "Thứ tự trong văn bản gốc",
             dataIndex: "percentage",
             align: "center",
             width: 100,
@@ -277,101 +277,14 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                 const listVersionResult = checkingDocumentSelected?.checkingDocumentVersion
                 console.log(listVersionResult)
             }
-        },
-        {
-            title: "Mô tả",
-            dataIndex: "description",
-            align: "left",
-            width: 200,
-        },
-        {
-            title: "Thao tác",
-            width: 100,
-            align: "center",
-            render: (record) => (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <EditOutlined
-                        id={`tooltip_edit_${record._id}`}
-                        style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
-                        onClick={(e) => handleEdit(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
-                    >
-                        Chỉnh sửa
-                    </UncontrolledTooltip>
-                    <Popconfirm
-                        title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record)}
-                        cancelText="Hủy"
-                        okText="Đồng ý"
-                    >
-                        <DeleteOutlined
-                            style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
-                        />
-                    </Popconfirm>
-                    <AppstoreOutlined
-                        id={`tooltip_result_${record._id}`}
-                        style={{ color: "blue", cursor: "pointer"}}
-                        onClick={(e) => handleResult(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
-                    >
-                        Kết quả kiểm tra
-                    </UncontrolledTooltip>
-                </div>
-            ),
-        },
+        }
     ]
 
     return (
         <Card
-            title={`Danh sách phiên bản kiểm tra`}
+            title={`Danh sách các câu trùng`}
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
-            <Row style={{ justifyContent: "space-between" }}>
-                <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Label
-                        className=""
-                        style={{
-                            width: "100px",
-                            fontSize: "14px",
-                            height: "34px",
-                            display: "flex",
-                            alignItems: "center",
-                        }}
-                    >
-                        Tìm kiếm
-                    </Label>
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm"
-                        style={{ height: "34px" }}
-                        onChange={(e) => {
-                            if (e.target.value === "") {
-                                setSearch("")
-                            }
-                        }}
-                        onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                                setSearch(e.target.value)
-                                setCurrentPage(1)
-                            }
-                        }}
-                    />
-                </Col>
-                <Col sm="7" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                        onClick={(e) => setIsAdd(true)}
-                        color="primary"
-                        className="addBtn"
-                        style={{
-                            width: "100px",
-                        }}
-                    >
-                        Thêm mới
-                    </Button>
-                </Col>
-            </Row>
             <Table
                 columns={columns}
                 dataSource={data}
@@ -399,5 +312,5 @@ const VersionModal = ({ checkingDocumentSelected }) => {
         </Card>
     )
 }
-export default VersionModal
+export default ContentModal
 
