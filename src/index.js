@@ -43,7 +43,6 @@ import "react-perfect-scrollbar/dist/css/styles.css"
 import "@styles/react/libs/react-hot-toasts/react-hot-toasts.scss"
 
 // ** Core styles
-// import "./index.scss"
 import "./@core/scss/core.scss"
 import "./@core/assets/fonts/feather/iconfont.css"
 import "./assets/scss/style.scss"
