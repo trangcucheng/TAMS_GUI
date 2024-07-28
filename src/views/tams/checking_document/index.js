@@ -7,6 +7,7 @@ import {
     Popconfirm,
     Switch,
     Collapse,
+    Select
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -35,7 +36,7 @@ import { AbilityContext } from '@src/utility/context/Can'
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import AvatarGroup from "@components/avatar-group"
-import Select from 'react-select'
+// import Select from 'react-select'
 import Flatpickr from "react-flatpickr"
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js"
 import "@styles/react/libs/flatpickr/flatpickr.scss"
@@ -207,10 +208,11 @@ const CheckingDocument = () => {
     }
     const handleChangeCourse = (value) => {
         if (value) {
-            setCourseId(value.value)
+            setCourseId(value)
             setCurrentPage(1)
+        } else {
+            setCourseId()
         }
-        setCourseId()
     }
     const handleViewUser = (role) => {
         setRoleSelected(role)
@@ -564,7 +566,8 @@ const CheckingDocument = () => {
                                 <Select
                                     placeholder="Chọn đợt kiểm tra"
                                     className='mb-50 select-custom flex-1'
-                                    options={listCourse} isClearable
+                                    options={listCourse} 
+                                    allowClear
                                     onChange={(value) => handleChangeCourse(value)}
                                 />
 
