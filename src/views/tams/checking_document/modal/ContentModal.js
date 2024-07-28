@@ -44,12 +44,11 @@ import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import classnames from "classnames"
-import AddNewCheckingDocumentVersion from "./AddNewVersionModal"
 import { deleteCheckingDocumentVersion, getCheckingDocumentVersion } from "../../../../api/checking_document_version"
 import { detailCheckingDocument } from "../../../../api/checking_document"
-import EditCheckingDocumentVersion from "./EditVersionModal"
+import { getListSentenceByCheckingResult } from "../../../../api/checking_result"
 
-const ContentModal = ({ checkingDocumentSelected }) => {
+const ContentModal = ({ listSentenceByCheckingResult }) => {
     const navigate = useNavigate()
     const MySwal = withReactContent(Swal)
     const [listPerGroup, setListPerGroup] = useState([])
@@ -64,13 +63,12 @@ const ContentModal = ({ checkingDocumentSelected }) => {
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [checkingDocumentVersionSelected, setCheckingDocumentVersionSelected] = useState()
-
+    console.log(listSentenceByCheckingResult)
     const getData = () => {
-        detailCheckingDocument(checkingDocumentSelected?.id)
-            .then((res) => {
-                const result = res?.data?.checkingDocumentVersion
-                setData(result)
-                setCount(result?.length)
+        getListSentenceByCheckingResult(listSentenceByCheckingResult?.id, 1)
+            .then((res) => {  
+                setData(res.data)
+                setCount(res?.total)
             })
             .catch((err) => {
                 console.log(err)
@@ -123,7 +121,7 @@ const ContentModal = ({ checkingDocumentSelected }) => {
     useEffect(() => {
         // getInfo()
         getData()
-    }, [currentPage, rowsPerPage, search, checkingDocumentSelected])
+    }, [listSentenceByCheckingResult])
 
     // const _handleCheckRoleAction = (e, act, permission, role) => {
     //     setListSubmit((pre) => {
@@ -258,9 +256,12 @@ const ContentModal = ({ checkingDocumentSelected }) => {
         },
         {
             title: "Nội dung",
-            dataIndex: "fileName",
+            dataIndex: "content",
             align: "left",
             width: 500,
+            render: (text, record, index) => (
+                <span>{record?.sentence?.content}</span>
+            ),
         },
         {
             title: "Thứ tự trong VB kiểm tra",
@@ -272,11 +273,7 @@ const ContentModal = ({ checkingDocumentSelected }) => {
             title: "Thứ tự trong văn bản gốc",
             dataIndex: "percentage",
             align: "center",
-            width: 100,
-            render: (text, record, index) => {
-                const listVersionResult = checkingDocumentSelected?.checkingDocumentVersion
-                console.log(listVersionResult)
-            }
+            width: 100
         }
     ]
 
@@ -307,8 +304,6 @@ const ContentModal = ({ checkingDocumentSelected }) => {
                     }
                 }}
             />
-            <AddNewCheckingDocumentVersion open={isAdd} handleModal={handleModal} getData={getData} rowsPerPage={rowsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} checkingDocumentSelected={checkingDocumentSelected} listSubmit={listSubmit} />
-            {checkingDocumentVersionSelected && <EditCheckingDocumentVersion open={isEdit} handleModal={handleModal} getData={getData} rowsPerPage={rowsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} infoEditVersion={checkingDocumentVersionSelected} listSubmit={listSubmit} dataCheckingDocument={checkingDocumentSelected} />}
         </Card>
     )
 }
