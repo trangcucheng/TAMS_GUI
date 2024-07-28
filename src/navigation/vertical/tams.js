@@ -26,7 +26,7 @@ export default [
     id: 'checking-document',
     title: 'Kiểm tra tài liệu',
     icon: <Clipboard size={20} />,
-    navLink: '/tams/checking-document',
+    navLink: ['/tams/checking-document', '/tams/checking-result/:id'],
     role: 0
   },
   {

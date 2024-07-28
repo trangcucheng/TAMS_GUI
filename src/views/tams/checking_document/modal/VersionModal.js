@@ -23,7 +23,7 @@ import {
     UncontrolledTooltip,
     CardBody,
 } from "reactstrap"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { Plus, X } from "react-feather"
 import {
     AppstoreAddOutlined,
@@ -287,40 +287,45 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             title: "Thao tác",
             width: 100,
             align: "center",
-            render: (record) => (
-                <div style={{ display: "flex", justifyContent: "center" }}>
+            render: (record) => {
+                console.log(record)
+                return (
+                    <div style={{ display: "flex", justifyContent: "center" }}>
 
-                    <EditOutlined
-                        id={`tooltip_edit_${record._id}`}
-                        style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
-                        onClick={(e) => handleEdit(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
-                    >
-                        Chỉnh sửa
-                    </UncontrolledTooltip>
-                    <AppstoreOutlined
-                        id={`tooltip_result_${record._id}`}
-                        style={{ color: "#09a863", cursor: "pointer", marginRight: '1rem' }}
-                        onClick={(e) => handleResult(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
-                    >
-                        Kết quả kiểm tra
-                    </UncontrolledTooltip>
-                    <Popconfirm
-                        title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record)}
-                        cancelText="Hủy"
-                        okText="Đồng ý"
-                    >
-                        <DeleteOutlined
-                            style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
+                        <EditOutlined
+                            id={`tooltip_edit_${record._id}`}
+                            style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
+                            onClick={(e) => handleEdit(record)}
                         />
-                    </Popconfirm>
+                        <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
+                        >
+                            Chỉnh sửa
+                        </UncontrolledTooltip>
+                        <NavLink to={`/tams/checking-result/${record.id}`}>
+                            <AppstoreOutlined
+                                id={`tooltip_result_${record._id}`}
+                                style={{ color: "blue", cursor: "pointer", marginRight: '1rem' }}
+                            // onClick={(e) => handleResult(record)}
+                            />
+                        </NavLink>
+                        <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
+                        >
+                            Kết quả kiểm tra
+                        </UncontrolledTooltip>
+                        <Popconfirm
+                            title="Bạn chắc chắn xóa?"
+                            onConfirm={() => handleDelete(record)}
+                            cancelText="Hủy"
+                            okText="Đồng ý"
+                        >
+                            <DeleteOutlined
+                                style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
+                            />
+                        </Popconfirm>
 
-                </div>
-            ),
+                    </div>
+                )
+            },
         },
     ]
 

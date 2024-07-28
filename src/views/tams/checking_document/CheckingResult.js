@@ -22,7 +22,7 @@ import {
     CardBody,
     CardTitle,
 } from "reactstrap"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { Plus, X } from "react-feather"
 import {
     AppstoreAddOutlined,
@@ -62,6 +62,7 @@ import { toDateString, toDateTimeString } from "../../../utility/Utils"
 // import ListPermission from './detail'
 import { deleteCheckingDocument, getCheckingDocument } from "../../../api/checking_document"
 import ContentModal from "./modal/ContentModal"
+import { getSimilarDocument } from "../../../api/checking_result"
 
 const CheckingResult = () => {
     const ability = useContext(AbilityContext)
@@ -83,21 +84,16 @@ const CheckingResult = () => {
     const [listPermissionSelected, setListPermissionSelected] = useState([])
     const [checkingDocumentSelected, setCheckingDocumentSelected] = useState()
     const [listAllRole, setListAllRole] = useState([])
+    const params = useParams()
 
-    const getData = (page, limit, search) => {
-        getCheckingDocument({
-            params: {
-                page,
-                limit,
-                ...(search && search !== "" && { search }),
-            },
-        })
+    const getData = () => {
+        getSimilarDocument(Number(params?.id))
             .then((res) => {
                 const result = res?.data?.map(((item, index) => {
                     return { ...item, _id: item.id, key: index }
                 }))
                 setData(result)
-                setCount(res?.pagination?.totalRecords)
+                setCount(res?.total)
             })
             .catch((err) => {
                 console.log(err)
@@ -146,8 +142,8 @@ const CheckingResult = () => {
     //         })
     // }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search)
-    }, [currentPage, rowsPerPage, search])
+        getData()
+    }, [])
 
     const handleModal = () => {
         setIsAdd(false)
@@ -304,59 +300,115 @@ const CheckingResult = () => {
     //     setRoleSelected(role)
     //     setIsPer(true)
     // }
+
+    const rowClassName = (record) => {
+        if (record.similarity > 15) {
+            return 'highlighted-row'
+        }
+        return ''
+    }
+
     const columns = [
         {
             title: "STT",
             dataIndex: "stt",
             width: 30,
             align: "center",
-            render: (text, record, index) => (
-                <span>{((currentPage - 1) * rowsPerPage) + index + 1}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ color: 'red', fontWeight: '600' }}>{((currentPage - 1) * rowsPerPage) + index + 1}</span>
+                    )
+                } else {
+                    return (
+                        <span>{((currentPage - 1) * rowsPerPage) + index + 1}</span>
+                    )
+                }
+            }
         },
         {
             title: "Tên tài liệu",
             dataIndex: "title",
             width: 500,
             align: "left",
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record.title}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.document?.title}</span>
+                    )
+                } else {
+                    return (
+                        <span>{record?.document?.title}</span>
+                    )
+                }
+            }
         },
         {
             title: "Tác giả",
             dataIndex: "author",
             width: 180,
             align: "left",
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record.author}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.author}</span>
+                    )
+                } else {
+                    return (
+                        <span>{record?.author}</span>
+                    )
+                }
+            }
         },
         {
             title: "Lĩnh vực",
             dataIndex: "course",
             width: 150,
             align: "left",
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record?.course?.name}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.course}</span>
+                    )
+                } else {
+                    return (
+                        <span>{record?.course}</span>
+                    )
+                }
+            }
         },
         {
             title: "Loại tài liệu",
-            dataIndex: "createdAt",
+            dataIndex: "documentType",
             width: 120,
             align: "center",
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{toDateTimeString(record.createdAt)}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.documentType}</span>
+                    )
+                } else {
+                    return (
+                        <span>{record?.documentType}</span>
+                    )
+                }
+            }
         },
         {
             title: "Độ trùng lặp (%)",
             width: 120,
             align: "center",
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record?.checkingDocumentVersion[0]?.checkingResult?.find(item => item.typeCheckingId === 2)?.similarityTotal}</span>
-            ),
+            render: (text, record, index) => {
+                if (record?.similarity > 15) {
+                    return (
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.similarity}</span>
+                    )
+                } else {
+                    return (
+                        <span>{record?.similarity}</span>
+                    )
+                }
+            }
         },
         {
             title: "Thao tác",
@@ -487,7 +539,7 @@ const CheckingResult = () => {
                             bordered
                             expandable={{
                                 expandedRowRender: (record) => <ContentModal
-                                    checkingDocumentSelected={record} />,
+                                    listSentenceByCheckingResult={record} />,
                                 rowExpandable: (record) => record.name !== 'Not Expandable',
                                 // expandRowByClick: true
                             }}
@@ -500,6 +552,7 @@ const CheckingResult = () => {
                                 showSizeChanger: true,
                                 showTotal: (total, range) => <span>Tổng số: {total}</span>,
                             }}
+                            rowClassName={rowClassName}
                         />
                     </Col>
                     <Col md="12">
