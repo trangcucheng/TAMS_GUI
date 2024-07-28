@@ -174,7 +174,7 @@ const DocumentType = () => {
 
     return (
         <Card
-            title="Danh sách đợt kiểm tra"
+            title="Danh sách loại tài liệu"
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
             <Row style={{ justifyContent: "space-between" }}>

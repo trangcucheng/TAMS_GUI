@@ -69,7 +69,7 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
             if (result.status === 'success') {
                 Swal.fire({
                     title: "Thêm mới đợt kiểm tra thành công",
-                    text: "Yêu cầu đã được phê duyệt!",
+                    text: "",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success"
@@ -99,16 +99,16 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
         })
     }
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-md'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-md'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Thêm mới đợt kiểm tra</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Thêm mới đợt kiểm tra</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col xs={12}>
                         <Label className='form-label' for='name'>
-                            Tên đợt kiểm tra <span style={{color: 'red'}}>(*)</span>
+                            Tên đợt kiểm tra <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -128,7 +128,7 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12}>
                         <Label className='form-label' for='date'>
-                            Thời gian <span style={{color: 'red'}}>(*)</span>
+                            Thời gian <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}

@@ -111,16 +111,7 @@ const Major = () => {
             ),
         },
         {
-            title: "Tên loại tài liệu",
-            dataIndex: "name",
-            align: 'left',
-            width: 500,
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
-            ),
-        },
-        {
-            title: "Thời gian tạo",
+            title: "Ngày tạo",
             dataIndex: "createdAt",
             align: 'center',
             width: 150,
@@ -128,6 +119,16 @@ const Major = () => {
                 <span>{toDateTimeString(record.createdAt)}</span>
             ),
         },
+        {
+            title: "Tên lĩnh vực",
+            dataIndex: "name",
+            align: 'left',
+            width: 500,
+            render: (text, record, index) => (
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
+            ),
+        },
+     
         {
             title: "Mô tả",
             dataIndex: "description",
@@ -138,7 +139,7 @@ const Major = () => {
             ),
         },
         {
-            title: "Thao tác",
+            title: "Tác vụ",
             width: 100,
             align: "center",
             render: (record) => (
@@ -174,7 +175,7 @@ const Major = () => {
 
     return (
         <Card
-            title="Danh sách đợt kiểm tra"
+            title="Danh sách lĩnh vực"
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
             <Row style={{ justifyContent: "space-between" }}>

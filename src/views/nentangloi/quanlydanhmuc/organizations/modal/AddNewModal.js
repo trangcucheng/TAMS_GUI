@@ -43,8 +43,7 @@ const AddNewModal = ({
   listTypes,
   setCurrentPage,
   handleModal,
-  listOrgans,
-  listLevels,
+  listOrgans
 }) => {
   const treeData = listOrgans
   const MySwal = withReactContent(Swal)
@@ -124,14 +123,15 @@ const AddNewModal = ({
     <Modal
       isOpen={open}
       toggle={handleModal}
-      contentClassName="pt-0"
       autoFocus={false}
-      className="modal-md"
+      className="modal-dialog-top modal-md"
     >
-      <ModalHeader className="" toggle={handleModal} close={CloseBtn} tag="div">
-        <h4 className="modal-title">Thêm mới đơn vị</h4>
+      <ModalHeader className='bg-transparent' toggle={handleModal}>
       </ModalHeader>
-      <ModalBody className="flex-grow-1">
+      <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+        <div className='text-center mb-1'>
+          <h2 className='mb-1'>Thêm mới đơn vị</h2>
+        </div>
         <Form onSubmit={handleSubmit(addNew)}>
           <Row className="content-space-between">
             <div className="mb-1 col col-6">

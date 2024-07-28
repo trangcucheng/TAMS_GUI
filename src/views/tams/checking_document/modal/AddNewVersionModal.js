@@ -26,7 +26,7 @@ import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { postCheckingDocumentVersion } from "../../../../api/checking_document_version"
 
-const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
+const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDocumentSelected }) => {
     const AddNewCheckingDocumentVersionSchema = yup.object().shape({
         file: yup.mixed().required("Yêu cầu nhập file")
     })
@@ -59,12 +59,12 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('description', data.description)
-        // formData.append('checkingDocumentId', dataId)
+        formData.append('checkingDocumentId', checkingDocumentSelected?.id)
         postCheckingDocumentVersion(formData).then(result => {
             if (result.status === 'success') {
                 Swal.fire({
                     title: "Thêm mới phiên bản kiểm tra thành công",
-                    text: "Yêu cầu đã được phê duyệt!",
+                    text: "",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success"
@@ -73,7 +73,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
             } else {
                 Swal.fire({
                     title: "Thêm mới phiên bản kiểm tra thất bại",
-                    text: "Vui lòng thử lại sau!",
+                    text: "Vui lòng kiểm tra thông tin!",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger"
@@ -83,25 +83,32 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
             getData()
             handleCloseModal()
         }).catch(error => {
-            console.log(error)
+            Swal.fire({
+                title: "Thêm mới phiên bản kiểm tra thất bại",
+                text: `Có lỗi xảy ra - ${error.message}!`,
+                icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            })
         })
     }
 
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-lg'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-lg'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Thêm mới phiên bản kiểm tra</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Thêm mới phiên bản kiểm tra</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col xs={12}>
                         <Label className='form-label' for='checkingDocument'>
-                            phiên bản kiểm tra <span style={{color: 'red'}}>(*)</span>
+                            phiên bản kiểm tra <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             disabled
-                            // defaultValue={dataTitle} 
+                            defaultValue={checkingDocumentSelected?.title}
                             name='checkingDocument'
                             control={control}
                             render={({ field }) => (
@@ -123,7 +130,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12}>
                         <Label className='form-label' for='file'>
-                            Tài liệu <span style={{color: 'red'}}>(*)</span>
+                            Tài liệu <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             name='file'

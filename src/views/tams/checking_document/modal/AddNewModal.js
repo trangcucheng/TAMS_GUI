@@ -103,18 +103,20 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
             title: data.title,
             author: data.author,
             courseId: data.course.value,
-            description: data.description
+            description: data.description ?? ""
         }).then(result => {
             if (result.status === 'success') {
                 const formData = new FormData()
                 formData.append('file', file)
-                formData.append('description', data.description)
+                if (data.description) {
+                    formData.append('description', data.description)
+                }
                 formData.append('checkingDocumentId', result?.data?.id)
                 postCheckingDocumentVersion(formData).then(result => {
                     if (result.status === 'success') {
                         Swal.fire({
                             title: "Thêm mới kiểm tra tài liệu thành công",
-                            text: "Yêu cầu đã được phê duyệt!",
+                            text: "",
                             icon: "success",
                             customClass: {
                                 confirmButton: "btn btn-success"
@@ -140,11 +142,11 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
     }
 
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-lg'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-lg'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Thông tin tài liệu kiểm tra</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Thông tin tài liệu kiểm tra</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col xs={12}>

@@ -6,12 +6,6 @@ export const createOrganizationLevel = async (data) => {
     return res
 }
 
-export const getOrganizationLevel = async (data) => {
-    const uri = `/organizationlevel/list-all-organizationlevel`
-    const res = await API_PQ.get(uri, data)
-    return res
-}
-
 export const deleteOrganizationLevel = async (data) => {
     const uri = `/organizationlevel/delete-organizationlevel?organizationLevelID=${data}`
     const res = await API_PQ.delete(uri)

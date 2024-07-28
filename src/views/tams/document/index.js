@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Select } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -17,7 +17,7 @@ import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 // import style from "../../../../assets/scss/index.module.scss"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Select from "react-select"
+// import Select from "react-select"
 import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -25,6 +25,10 @@ import classnames from "classnames"
 import { AbilityContext } from '@src/utility/context/Can'
 import { deleteDocument, getDocument } from "../../../api/document"
 import { toDateString, toDateTimeString } from "../../../utility/Utils"
+import { getCourse } from "../../../api/course"
+import { getDocumentType } from "../../../api/document_type"
+import { getMajor } from "../../../api/major"
+import { type } from "jquery"
 
 const Document = () => {
     const ability = useContext(AbilityContext)
@@ -34,29 +38,89 @@ const Document = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [search, setSearch] = useState("")
+    const [courseId, setCourseId] = useState()
+    const [typeId, setTypeId] = useState()
+    const [majorId, setMajorId] = useState()
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
-    const getData = (page, limit, search) => {
+
+    const [listCourse, setListCourse] = useState([])
+    const [listDocumentType, setListDocumentType] = useState([])
+    const [listMajor, setListMajor] = useState([])
+
+    const getAllDataPromises = async () => {
+        const coursePromise = getCourse({ params: { page: 1, perPage: 10, search: '' } })
+        const documentTypePromise = getDocumentType({ params: { page: 1, perPage: 10, search: '' } })
+        const majorPromise = getMajor({ params: { page: 1, perPage: 10, search: '' } })
+
+        const promises = [coursePromise, documentTypePromise, majorPromise]
+        const results = await Promise.allSettled(promises)
+        const responseData = promises.reduce((acc, promise, index) => {
+            if (results[index].status === 'fulfilled') {
+                acc[index] = results[index].value
+            } else {
+                acc[index] = { error: results[index].reason }
+            }
+            return acc
+        }, [])
+
+        const courseRes = responseData[0]
+        const documentTypeRes = responseData[1]
+        const majorRes = responseData[2]
+        results.map((res) => {
+            if (res.status !== 'fulfilled') {
+                setListCourse(null)
+                setListDocumentType(null)
+                setListMajor(null)
+            }
+        })
+        const courses = courseRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        const documentTypes = documentTypeRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        const majors = majorRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        setListCourse(courses)
+        setListDocumentType(documentTypes)
+        setListMajor(majors)
+    }
+
+    const getData = (page, limit, search, courseId, typeId, majorId) => {
         getDocument({
             params: {
                 page,
                 perPage: limit,
                 ...(search && search !== "" && { search }),
+                ...(courseId && { courseId }),
+                ...(typeId && { typeId }),
+                ...(majorId && { majorId })
             },
         })
             .then((res) => {
                 setData(res?.data)
                 setCount(res?.pagination?.totalRecords)
-                console.log(res)
             })
             .catch((err) => {
                 console.log(err)
             })
     }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search)
-    }, [currentPage, rowsPerPage, search])
+        getData(currentPage, rowsPerPage, search, courseId, typeId, majorId)
+        getAllDataPromises()
+    }, [currentPage, rowsPerPage, search, courseId, typeId, majorId])
 
 
     const handleModal = () => {
@@ -101,6 +165,31 @@ const Document = () => {
                 console.log(error)
             })
     }
+
+    const handleChangeCourse = (value) => {
+        if (value) {
+            setCourseId(value)
+        } else {
+            setCourseId()
+        }
+    }
+
+    const handleChangeDocumentType = (value) => {
+        if (value) {
+            setTypeId(value)
+        } else {
+            setTypeId()
+        }
+    }
+
+    const handleChangeMajor = (value) => {
+        if (value) {
+            setMajorId(value)
+        } else {
+            setMajorId()
+        }
+    }
+
     const columns = [
         {
             title: "STT",
@@ -180,45 +269,73 @@ const Document = () => {
             ),
         },
     ]
-    const showTotal = (count) => `Tổng số: ${count}`
 
     return (
         <Card
             title="Danh sách tài liệu"
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
-            <Row style={{ justifyContent: "space-between" }}>
-                <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Label
-                        className=""
-                        style={{
-                            width: "100px",
-                            fontSize: "14px",
-                            height: "34px",
-                            display: "flex",
-                            alignItems: "center",
-                        }}
-                    >
-                        Tìm kiếm
-                    </Label>
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm"
-                        style={{ height: "34px" }}
-                        onChange={(e) => {
-                            if (e.target.value === "") {
-                                setSearch("")
-                            }
-                        }}
-                        onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                                setSearch(e.target.value)
-                                setCurrentPage(1)
-                            }
-                        }}
-                    />
+            <Row>
+                <Col sm="10" style={{ display: "flex" }}>
+                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Label
+                                className=""
+                                style={{
+                                    width: "100px",
+                                    fontSize: "14px",
+                                    height: "34px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                Tìm kiếm
+                            </Label>
+                            <Input
+                                type="text"
+                                placeholder="Tìm kiếm"
+                                style={{ height: "34px" }}
+                                onChange={(e) => {
+                                    if (e.target.value === "") {
+                                        setSearch("")
+                                    }
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === "Enter") {
+                                        setSearch(e.target.value)
+                                        setCurrentPage(1)
+                                    }
+                                }}
+                            />
+                        </Col>
+                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Select
+                                placeholder="Chọn đợt kiểm tra"
+                                className='mb-50 select-custom'
+                                options={listCourse}
+                                allowClear
+                                onChange={(value) => handleChangeCourse(value)}
+                            />
+                        </Col>
+                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Select
+                                placeholder="Chọn loại tài liệu"
+                                className='mb-50 select-custom'
+                                options={listDocumentType}
+                                allowClear
+                                onChange={(value) => handleChangeDocumentType(value)}
+                            />
+                        </Col>
+                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Select
+                                placeholder="Chọn lĩnh vực"
+                                className='mb-50 select-custom'
+                                options={listMajor}
+                                allowClear
+                                onChange={(value) => handleChangeMajor(value)}
+                            />
+                        </Col>
                 </Col>
-                <Col sm="7" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Col sm="2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
                         onClick={(e) => setIsAdd(true)}
                         color="primary"
