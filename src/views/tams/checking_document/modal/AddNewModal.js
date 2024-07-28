@@ -103,12 +103,14 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
             title: data.title,
             author: data.author,
             courseId: data.course.value,
-            description: data.description
+            description: data.description ?? ""
         }).then(result => {
             if (result.status === 'success') {
                 const formData = new FormData()
                 formData.append('file', file)
-                formData.append('description', data.description)
+                if (data.description) {
+                    formData.append('description', data.description)
+                }
                 formData.append('checkingDocumentId', result?.data?.id)
                 postCheckingDocumentVersion(formData).then(result => {
                     if (result.status === 'success') {

@@ -111,6 +111,15 @@ const Major = () => {
             ),
         },
         {
+            title: "Ngày tạo",
+            dataIndex: "createdAt",
+            align: 'center',
+            width: 150,
+            render: (text, record, index) => (
+                <span>{toDateTimeString(record.createdAt)}</span>
+            ),
+        },
+        {
             title: "Tên lĩnh vực",
             dataIndex: "name",
             align: 'left',
@@ -119,15 +128,7 @@ const Major = () => {
                 <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
             ),
         },
-        {
-            title: "Ngày tạo mới",
-            dataIndex: "createdAt",
-            align: 'center',
-            width: 150,
-            render: (text, record, index) => (
-                <span>{toDateTimeString(record.createdAt)}</span>
-            ),
-        },
+     
         {
             title: "Mô tả",
             dataIndex: "description",

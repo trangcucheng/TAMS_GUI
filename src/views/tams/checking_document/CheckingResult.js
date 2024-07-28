@@ -2,7 +2,6 @@ import {
     Table,
     Input,
     Card,
-    CardTitle,
     Tag,
     Popconfirm,
     Switch,
@@ -21,6 +20,7 @@ import {
     FormFeedback,
     UncontrolledTooltip,
     CardBody,
+    CardTitle,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 import { Plus, X } from "react-feather"
@@ -94,7 +94,7 @@ const CheckingResult = () => {
         })
             .then((res) => {
                 const result = res?.data?.map(((item, index) => {
-                    return {...item, _id: item.id, key: index}
+                    return { ...item, _id: item.id, key: index }
                 }))
                 setData(result)
                 setCount(res?.pagination?.totalRecords)
@@ -320,7 +320,7 @@ const CheckingResult = () => {
             width: 500,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record.title}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.title}</span>
             ),
         },
         {
@@ -329,7 +329,7 @@ const CheckingResult = () => {
             width: 180,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record.author}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.author}</span>
             ),
         },
         {
@@ -338,7 +338,7 @@ const CheckingResult = () => {
             width: 150,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record?.course?.name}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record?.course?.name}</span>
             ),
         },
         {
@@ -347,7 +347,7 @@ const CheckingResult = () => {
             width: 120,
             align: "center",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{toDateTimeString(record.createdAt)}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{toDateTimeString(record.createdAt)}</span>
             ),
         },
         {
@@ -355,7 +355,7 @@ const CheckingResult = () => {
             width: 120,
             align: "center",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record?.checkingDocumentVersion[0]?.checkingResult?.find(item => item.typeCheckingId === 2)?.similarityTotal}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record?.checkingDocumentVersion[0]?.checkingResult?.find(item => item.typeCheckingId === 2)?.similarityTotal}</span>
             ),
         },
         {
@@ -458,9 +458,26 @@ const CheckingResult = () => {
                 title="Kết quả kiểm tra tài liệu"
                 style={{ backgroundColor: "white", width: "100%", height: "100%" }}
             >
+                <Col md="12" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
+                        <Link to="/tams/checking-document">
+                            <Button
+                                // onClick={(e) => setIsAdd(true)}
+                                color="primary"
+                                className="addBtn"
+                                style={{
+                                    width: '100px',
+                                }}
+                                outline
+                            >
+                                Quay lại
+                            </Button>
+                        </Link>
+                    }
+                </Col>
                 <Row>
-                    <Col md="12" style={{textAlign: 'center'}}>
-                        <h5>Kết quả trùng lặp so với CSDL mẫu: <span style={{color: 'red'}}>85%</span></h5>
+                    <Col md="12" style={{ textAlign: 'center' }}>
+                        <h5>Kết quả trùng lặp so với CSDL mẫu: <span style={{ color: 'red' }}>85%</span></h5>
                     </Col>
                     <Col md="12">
                         <h6>1. Danh sách các tài liệu trùng lặp cao</h6>

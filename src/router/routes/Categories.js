@@ -11,7 +11,7 @@ const ListOrganizations = lazy(() => import('../../views/nentangloi/quanlydanhmu
 const CategoriesRoutes = [
     {
         element: <ListUsers />,
-        path: '/apps/manage/users',
+        path: '/tams/users',
         meta: {
             appLayout: true
         }
@@ -37,7 +37,7 @@ const CategoriesRoutes = [
             appLayout: true
         }
     },
-   
+
 ]
 
 export default CategoriesRoutes

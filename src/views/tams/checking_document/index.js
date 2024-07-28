@@ -377,7 +377,7 @@ const CheckingDocument = () => {
         {
             title: "Tác giả",
             dataIndex: "author",
-            width: 180,
+            width: 220,
             align: "left",
             render: (text, record, index) => (
                 <span style={{ whiteSpace: 'break-spaces' }}>{record.author}</span>
@@ -525,88 +525,103 @@ const CheckingDocument = () => {
             >
                 <Row>
                     <Col md="12">
-                        <Row style={{ justifyContent: "space-between" }}>
-                            <Col
-                                sm="3"
-                                style={{ display: "flex", justifyContent: "flex-end" }}
-                            >
-                                <Label
-                                    className=""
-                                    style={{
-                                        width: "100px",
-                                        fontSize: "14px",
-                                        height: "34px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    Tìm kiếm
-                                </Label>
-                                <Input
-                                    type="text"
-                                    placeholder="Tìm kiếm"
-                                    style={{ height: "34px" }}
-                                    onChange={(e) => {
-                                        if (e.target.value === "") {
-                                            setSearch("")
-                                        }
-                                    }}
-                                    onKeyPress={(e) => {
-                                        if (e.key === "Enter") {
-                                            setSearch(e.target.value)
-                                            setCurrentPage(1)
-                                        }
-                                    }}
-                                />
-                            </Col>
-                            <Col
-                                sm="3"
-                                style={{ display: "flex", justifyContent: "flex-start" }}
-                            >
-                                <Select
-                                    placeholder="Chọn đợt kiểm tra"
-                                    className='mb-50 select-custom flex-1'
-                                    options={listCourse} 
-                                    allowClear
-                                    onChange={(value) => handleChangeCourse(value)}
-                                />
-
-                            </Col>
-                            <Col
-                                sm="3"
-                                style={{ display: "flex", justifyContent: "flex-start" }}
-                            >
-                                <Label
-                                    className=""
-                                    style={{
-                                        width: "150px",
-                                        fontSize: "14px",
-                                        height: "34px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    Ngày kiểm tra
-                                </Label>
-                                <Flatpickr
-                                    style={{ padding: '0.35rem 1rem' }}
-                                    className="form-control invoice-edit-input date-picker mb-50"
-                                    options={{
-                                        mode: "range",
-                                        dateFormat: "d-m-Y", // format ngày giờ
-                                        locale: {
-                                            ...Vietnamese
-                                        },
-                                        defaultDate: [oneWeekAgo, new Date()]
-                                    }}
-                                    placeholder="dd/mm/yyyy"
-                                />
-                            </Col>
-                            {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
+                        <Row>
+                            <Col md="10" style={{ display: "flex", justifyContent: "flex-start" }}>
                                 <Col
-                                    sm="3"
-                                    style={{ display: "flex", justifyContent: "flex-end" }}
+                                    sm="4"
+                                    style={{ display: "flex", justifyContent: "flex-end", marginRight: "0.5rem" }}
                                 >
+                                    <Label
+                                        className=""
+                                        style={{
+                                            width: "100px",
+                                            fontSize: "14px",
+                                            height: "34px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        Tìm kiếm
+                                    </Label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Tìm kiếm"
+                                        style={{ height: "34px" }}
+                                        onChange={(e) => {
+                                            if (e.target.value === "") {
+                                                setSearch("")
+                                            }
+                                        }}
+                                        onKeyPress={(e) => {
+                                            if (e.key === "Enter") {
+                                                setSearch(e.target.value)
+                                                setCurrentPage(1)
+                                            }
+                                        }}
+                                    />
+                                </Col>
+                                <Col
+                                    sm="4"
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                        marginRight: "0.5rem"
+                                    }}
+                                >
+                                    <Label
+                                        className=""
+                                        style={{
+                                            width: "120px",
+                                            fontSize: "14px",
+                                            height: "34px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        Chọn đợt kiểm tra
+                                    </Label>
+                                    <Select
+                                        placeholder="Chọn đợt kiểm tra"
+                                        className='mb-50 select-custom flex-1'
+                                        options={listCourse}
+                                        allowClear
+                                        onChange={(value) => handleChangeCourse(value)}
+                                    />
+
+                                </Col>
+                                <Col
+                                    sm="4"
+                                    style={{ display: "flex", justifyContent: "flex-start" }}
+                                >
+                                    <Label
+                                        className=""
+                                        style={{
+                                            width: "150px",
+                                            fontSize: "14px",
+                                            height: "34px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        Ngày kiểm tra
+                                    </Label>
+                                    <Flatpickr
+                                        style={{ padding: '0.35rem 1rem' }}
+                                        className="form-control invoice-edit-input date-picker mb-50"
+                                        options={{
+                                            mode: "range",
+                                            dateFormat: "d-m-Y", // format ngày giờ
+                                            locale: {
+                                                ...Vietnamese
+                                            },
+                                            defaultDate: [oneWeekAgo, new Date()]
+                                        }}
+                                        placeholder="dd/mm/yyyy"
+                                    />
+                                </Col>
+                            </Col>
+                            <Col md="2" style={{ display: "flex", justifyContent: "flex-end" }}>
+                                {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
                                     <Button
                                         onClick={(e) => setIsAdd(true)}
                                         color="primary"
@@ -617,7 +632,8 @@ const CheckingDocument = () => {
                                     >
                                         Thêm mới
                                     </Button>
-                                </Col>}
+                                }
+                            </Col>
                         </Row>
                         <Table
                             columns={columns}

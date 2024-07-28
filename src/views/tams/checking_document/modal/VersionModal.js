@@ -31,7 +31,7 @@ import {
     EditOutlined,
     LockOutlined,
     AppstoreOutlined
-    
+
 } from "@ant-design/icons"
 import { AbilityContext } from "@src/utility/context/Can"
 //   import style from "../../../../../assets/scss/index.module.scss"
@@ -275,7 +275,6 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             width: 100,
             render: (text, record, index) => {
                 const listVersionResult = checkingDocumentSelected?.checkingDocumentVersion
-                console.log(listVersionResult)
             }
         },
         {
@@ -290,6 +289,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             align: "center",
             render: (record) => (
                 <div style={{ display: "flex", justifyContent: "center" }}>
+
                     <EditOutlined
                         id={`tooltip_edit_${record._id}`}
                         style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
@@ -298,6 +298,15 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                     <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
                     >
                         Chỉnh sửa
+                    </UncontrolledTooltip>
+                    <AppstoreOutlined
+                        id={`tooltip_result_${record._id}`}
+                        style={{ color: "#09a863", cursor: "pointer", marginRight: '1rem' }}
+                        onClick={(e) => handleResult(record)}
+                    />
+                    <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
+                    >
+                        Kết quả kiểm tra
                     </UncontrolledTooltip>
                     <Popconfirm
                         title="Bạn chắc chắn xóa?"
@@ -309,15 +318,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                             style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
                         />
                     </Popconfirm>
-                    <AppstoreOutlined
-                        id={`tooltip_result_${record._id}`}
-                        style={{ color: "blue", cursor: "pointer"}}
-                        onClick={(e) => handleResult(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
-                    >
-                        Kết quả kiểm tra
-                    </UncontrolledTooltip>
+
                 </div>
             ),
         },

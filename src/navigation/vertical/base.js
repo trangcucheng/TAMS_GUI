@@ -34,28 +34,6 @@ export default [
     role: 0
   },
   {
-    header: "Kiểm tra tài liệu",
-    role: 0
-  },
-  {
-    id: 'course',
-    title: 'Đợt kiểm tra',
-    icon: <DiffOutlined size={12} />,
-    navLink: '/tams/course',
-    action: 'read',
-    resource: 'DOT_KIEM_TRA',
-    role: 0
-  },
-  {
-    id: 'checking-document',
-    title: 'Kiểm tra tài liệu',
-    icon: <CheckOutlined size={12} />,
-    navLink: '/tams/checking-document',
-    action: 'read',
-    resource: 'KIEM_TRA_TAI_LIEU',
-    role: 0
-  },
-  {
     header: "Quản lý danh mục",
     role: 0
   },
@@ -87,6 +65,28 @@ export default [
     role: 0
   },
   {
+    header: "Kiểm tra tài liệu",
+    role: 0
+  },
+  {
+    id: 'course',
+    title: 'Đợt kiểm tra',
+    icon: <DiffOutlined size={12} />,
+    navLink: '/tams/course',
+    action: 'read',
+    resource: 'DOT_KIEM_TRA',
+    role: 0
+  },
+  {
+    id: 'checking-document',
+    title: 'Kiểm tra tài liệu',
+    icon: <CheckOutlined size={12} />,
+    navLink: '/tams/checking-document',
+    action: 'read',
+    resource: 'KIEM_TRA_TAI_LIEU',
+    role: 0
+  },
+  {
     header: "Quản lý hệ thống",
     role: 0
   },
@@ -94,7 +94,7 @@ export default [
     id: 'permissions',
     title: 'QL Tài khoản',
     icon: <Users size={12} />,
-    navLink: '/apps/manage/accounts',
+    navLink: '/tams/accounts',
     action: 'read',
     resource: 'TAI_KHOAN',
     role: 0
@@ -103,7 +103,7 @@ export default [
     id: 'role',
     title: 'Vai trò, phân quyền',
     icon: <Users size={12} />,
-    navLink: '/apps/manage/roles',
+    navLink: '/tams/roles',
     action: 'read',
     resource: 'PHAN_QUYEN_VAI_TRO',
     role: 0
@@ -112,16 +112,16 @@ export default [
     id: 'permissions',
     title: 'QL các quyền cơ bản',
     icon: <UserPlus size={12} />,
-    navLink: '/apps/manage/permissions',
+    navLink: '/tams/permissions',
     action: 'read',
     resource: 'CHUC_NANG',
     role: 0
   },
   {
     id: 'configuration',
-    title: 'Cấu hình hệ thống',
+    title: 'Cấu hình tham số',
     icon: <Settings size={12} />,
-    navLink: '/apps/manage/permissions_',
+    navLink: '/tams/config',
     action: 'read',
     resource: 'CHUC_NANG',
     role: 0
@@ -137,7 +137,7 @@ export default [
   //       id: 'permissions',
   //       title: 'Quản lý quyền chức năng cơ bản',
   //       icon: <Circle size={12} />,
-  //       navLink: '/apps/manage/permissions',
+  //       navLink: '/tams/permissions',
   //       action: 'read',
   //       resource: 'CHUC_NANG'
   //     },
@@ -145,7 +145,7 @@ export default [
   //     //   id: 'permissionGroups',
   //     //   title: 'Quản lý nhóm quyền',
   //     //   icon: <Circle size={12} />,
-  //     //   navLink: '/apps/manage/permissionGroups',
+  //     //   navLink: '/tams/permissionGroups',
   //     //   action: 'read',
   //     //   resource: 'NHOM_QUYEN'
   //     // },
@@ -153,7 +153,7 @@ export default [
   //     //   id: 'permissions',
   //     //   title: 'Quản lý quyền chức năng cơ bản',
   //     //   icon: <Circle size={12} />,
-  //     //   navLink: '/apps/manage/permissions',
+  //     //   navLink: '/tams/permissions',
   //     //   action: 'read',
   //     //   resource: 'CHUC_NANG'
   //     // },
@@ -161,7 +161,7 @@ export default [
   //       id: 'role',
   //       title: 'Quản lý vai trò người dùng và phân quyền',
   //       icon: <Circle size={12} />,
-  //       navLink: '/apps/manage/roles',
+  //       navLink: '/tams/roles',
   //       action: 'read',
   //       resource: 'PHAN_QUYEN_VAI_TRO'
   //     },
@@ -169,7 +169,7 @@ export default [
   //     //   id: 'permiss',
   //     //   title: 'Phân quyền người dùng',
   //     //   icon: <Circle size={12} />,
-  //     //   navLink: '/apps/manage/userRoles',
+  //     //   navLink: '/tams/userRoles',
   //     //   action: 'read',
   //     //   resource: 'PHAN_QUYEN_NGUOI_DUNG'
   //     // },

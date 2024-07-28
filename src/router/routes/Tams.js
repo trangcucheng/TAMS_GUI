@@ -14,6 +14,7 @@ const DocumentType = lazy(() => import('../../views/tams/document_type'))
 // const User = lazy(() => import('../../views/tams/user'))
 // const CheckingDocumentVersion = lazy(() => import('../../views/tams/checking_document_version'))
 const Organization = lazy(() => import('../../views/nentangloi/quanlydanhmuc/organizations'))
+const Config = lazy(() => import('../../views/nentangloi/quanlyhethong/config'))
 
 const TamsRoutes = [
     {
@@ -59,7 +60,11 @@ const TamsRoutes = [
       {
         path: '/tams/organization',
         element: <Organization />
-      },
+    },
+    {
+        path: '/tams/config',
+        element: <Config />
+    },
     //   {
     //     path: '/tams/user',
     //     element: <User />

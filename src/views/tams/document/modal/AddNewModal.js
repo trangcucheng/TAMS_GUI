@@ -122,7 +122,9 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
         const action = submitter.getAttribute('name')
         const formData = new FormData()
         formData.append("file", file)
-        formData.append("description", data.description)
+        if (data.description) {
+            formData.append("description", data.description)
+        }
         formData.append("title", data.title)
         formData.append("source", data.source)
         formData.append("courseId", 0)

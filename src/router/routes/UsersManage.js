@@ -16,49 +16,49 @@ const ChangePass = lazy(() => import('../../views/nentangloi/quanlyhethong/users
 const UsersManageRoutes = [
     {
         element: <ListAccounts />,
-        path: '/apps/manage/accounts',
+        path: '/tams/accounts',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListUsers />,
-        path: '/apps/manage/users',
+        path: '/tams/users',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListGroups />,
-        path: '/apps/manage/groupusers',
+        path: '/tams/groupusers',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListPermissionGroups />,
-        path: '/apps/manage/permissionGroups',
+        path: '/tams/permissionGroups',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListPermissions />,
-        path: '/apps/manage/permissions',
+        path: '/tams/permissions',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListRoles />,
-        path: '/apps/manage/roles',
+        path: '/tams/roles',
         meta: {
             appLayout: true
         }
     },
     {
         element: <ListUserRoles />,
-        path: '/apps/manage/userRoles',
+        path: '/tams/userRoles',
         meta: {
             appLayout: true
         }
