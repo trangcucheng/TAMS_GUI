@@ -23,7 +23,7 @@ import Select from 'react-select'
 // ** Styles
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
-import { detailDocument, editDocument } from "../../../../api/document"
+import { editDocument } from "../../../../api/document"
 import { useEffect, useState } from "react"
 import { Loader } from "react-feather"
 import { getMajor } from "../../../../api/major"
@@ -97,18 +97,10 @@ const EditDocument = ({ open, handleModal, infoEdit, getData }) => {
     setListMajor(majors)
   }
 
-  console.log(infoEdit)
-  const getDataDetail = () => {
-    detailDocument(infoEdit?.id).then((res) => {
-      console.log(res)
-    })
-  }
-
   useEffect(() => {
     if (open) {
       getAllDataPromises()
     }
-    getDataDetail()
   }, [open])
 
   const onSubmit = data => {

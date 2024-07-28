@@ -366,6 +366,10 @@ form .col-6, .col-12 {
     border-color: #ff7879 !important
 }
 
+.ant-select-selector:hover {
+    border: 1px solid #d9d9d9 !important;
+}
+
 .shadow-box {
     margin: 20px; /* Khoảng cách giữa khung và bóng đổ */
     box-shadow: 0px 0px 10px 5px rgba(152, 152, 154, 0.5);
