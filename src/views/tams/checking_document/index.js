@@ -35,7 +35,10 @@ import { AbilityContext } from '@src/utility/context/Can'
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import AvatarGroup from "@components/avatar-group"
-import Select from "react-select"
+import Select from 'react-select'
+import Flatpickr from "react-flatpickr"
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js"
+import "@styles/react/libs/flatpickr/flatpickr.scss"
 import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -62,6 +65,11 @@ import { toDateString, toDateTimeString } from "../../../utility/Utils"
 // import ListPermission from './detail'
 import { deleteCheckingDocument, getCheckingDocument } from "../../../api/checking_document"
 import VersionModal from "./modal/VersionModal"
+import { PAGE_DEFAULT, PER_PAGE_DEFAULT } from "../../../utility/constant"
+import { getCourse } from "../../../api/course"
+
+const oneWeekAgo = new Date()
+oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
 const CheckingDocument = () => {
     const ability = useContext(AbilityContext)
@@ -73,6 +81,7 @@ const CheckingDocument = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerpage] = useState(100)
     const [search, setSearch] = useState("")
+    const [courseId, setCourseId] = useState()
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [isPer, setIsPer] = useState(false)
@@ -84,16 +93,51 @@ const CheckingDocument = () => {
     const [checkingDocumentSelected, setCheckingDocumentSelected] = useState()
     const [listAllRole, setListAllRole] = useState([])
 
-    const getData = (page, limit, search) => {
+    const [listCourse, setListCourse] = useState([])
+
+    const getAllDataPromises = async () => {
+        const coursePromise = getCourse({ params: { page: PAGE_DEFAULT, perPage: PER_PAGE_DEFAULT, search: '' } })
+
+        const promises = [coursePromise]
+        const results = await Promise.allSettled(promises)
+        const responseData = promises.reduce((acc, promise, index) => {
+            if (results[index].status === 'fulfilled') {
+                acc[index] = results[index].value
+            } else {
+                acc[index] = { error: results[index].reason }
+            }
+            return acc
+        }, [])
+
+        const courseRes = responseData[0]
+        results.map((res) => {
+            if (res.status !== 'fulfilled') {
+                setListCourse(null)
+            }
+        })
+        const courses = courseRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        setListCourse(courses)
+    }
+
+    const getData = (page, limit, search, courseId) => {
         getCheckingDocument({
             params: {
                 page,
                 limit,
                 ...(search && search !== "" && { search }),
+                courseId
             },
         })
             .then((res) => {
-                setData(res?.data)
+                const result = res?.data?.map(((item, index) => {
+                    return { ...item, _id: item.id, key: index }
+                }))
+                setData(result)
                 setCount(res?.pagination?.totalRecords)
             })
             .catch((err) => {
@@ -143,8 +187,9 @@ const CheckingDocument = () => {
     //         })
     // }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search)
-    }, [currentPage, rowsPerPage, search])
+        getData(currentPage, rowsPerPage, search, courseId)
+        getAllDataPromises()
+    }, [currentPage, rowsPerPage, search, courseId])
 
     const handleModal = () => {
         setIsAdd(false)
@@ -160,6 +205,13 @@ const CheckingDocument = () => {
         setCheckingDocumentSelected(record)
         setIsEdit(true)
     }
+    const handleChangeCourse = (value) => {
+        if (value) {
+            setCourseId(value.value)
+            setCurrentPage(1)
+        }
+        setCourseId()
+    }
     const handleViewUser = (role) => {
         setRoleSelected(role)
         setIsView(true)
@@ -168,7 +220,7 @@ const CheckingDocument = () => {
         deleteCheckingDocument(key)
             .then((res) => {
                 MySwal.fire({
-                    title: "Xóa vai trò thành công",
+                    title: "Xóa kiểm tra tài liệu thành công",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -317,7 +369,7 @@ const CheckingDocument = () => {
             width: 500,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record.title}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.title}</span>
             ),
         },
         {
@@ -326,7 +378,7 @@ const CheckingDocument = () => {
             width: 180,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record.author}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.author}</span>
             ),
         },
         {
@@ -335,7 +387,7 @@ const CheckingDocument = () => {
             width: 150,
             align: "left",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{record?.course?.name}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{record?.course?.name}</span>
             ),
         },
         {
@@ -344,7 +396,23 @@ const CheckingDocument = () => {
             width: 120,
             align: "center",
             render: (text, record, index) => (
-                <span style={{whiteSpace: 'break-spaces'}}>{toDateTimeString(record.createdAt)}</span>
+                <span style={{ whiteSpace: 'break-spaces' }}>{toDateTimeString(record.createdAt)}</span>
+            ),
+        },
+        {
+            title: "Trùng với TL cùng đợt (%)",
+            width: 120,
+            align: "center",
+            render: (text, record, index) => (
+                <span style={{ whiteSpace: 'break-spaces' }}>{record?.checkingDocumentVersion[0]?.checkingResult?.find(item => item.typeCheckingId === 2)?.similarityTotal}</span>
+            ),
+        },
+        {
+            title: "Trùng với DL mẫu (%)",
+            width: 120,
+            align: "center",
+            render: (text, record, index) => (
+                <span style={{ whiteSpace: 'break-spaces' }}>{record?.checkingDocumentVersion[0]?.checkingResult?.find(item => item.typeCheckingId === 1)?.similarityTotal}</span>
             ),
         },
         {
@@ -489,9 +557,51 @@ const CheckingDocument = () => {
                                     }}
                                 />
                             </Col>
+                            <Col
+                                sm="2"
+                                style={{ display: "flex", justifyContent: "flex-start" }}
+                            >
+                                <Select
+                                    placeholder="Chọn đợt kiểm tra"
+                                    className='mb-50 select-custom flex-1'
+                                    options={listCourse} isClearable
+                                    onChange={(value) => handleChangeCourse(value)}
+                                />
+
+                            </Col>
+                            <Col
+                                sm="4"
+                                style={{ display: "flex", justifyContent: "flex-start" }}
+                            >
+                                <Label
+                                    className=""
+                                    style={{
+                                        width: "150px",
+                                        fontSize: "14px",
+                                        height: "34px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    Ngày kiểm tra
+                                </Label>
+                                <Flatpickr
+                                    style={{ padding: '0.35rem 1rem' }}
+                                    className="form-control invoice-edit-input date-picker mb-50"
+                                    options={{
+                                        mode: "range",
+                                        dateFormat: "d-m-Y", // format ngày giờ
+                                        locale: {
+                                            ...Vietnamese
+                                        },
+                                        defaultDate: [oneWeekAgo, new Date()]
+                                    }}
+                                    placeholder="dd/mm/yyyy"
+                                />
+                            </Col>
                             {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
                                 <Col
-                                    sm="7"
+                                    sm="2"
                                     style={{ display: "flex", justifyContent: "flex-end" }}
                                 >
                                     <Button
@@ -511,11 +621,8 @@ const CheckingDocument = () => {
                             dataSource={data}
                             bordered
                             expandable={{
-                                // expandedRowRender: (record) => <VersionModal
-                                //     checkingDocumentSelected={record} />,
-                                expandedRowRender: (record) => {
-                                    console.log(record)
-                                },
+                                expandedRowRender: (record) => <VersionModal
+                                    checkingDocumentSelected={record} />,
                                 rowExpandable: (record) => record.name !== 'Not Expandable',
                                 // expandRowByClick: true
                             }}

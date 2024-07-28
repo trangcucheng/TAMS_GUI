@@ -26,7 +26,7 @@ import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { postCheckingDocumentVersion } from "../../../../api/checking_document_version"
 
-const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
+const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDocumentSelected }) => {
     const AddNewCheckingDocumentVersionSchema = yup.object().shape({
         file: yup.mixed().required("Yêu cầu nhập file")
     })
@@ -59,7 +59,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('description', data.description)
-        // formData.append('checkingDocumentId', dataId)
+        formData.append('checkingDocumentId', checkingDocumentSelected?.id)
         postCheckingDocumentVersion(formData).then(result => {
             if (result.status === 'success') {
                 Swal.fire({
@@ -73,7 +73,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
             } else {
                 Swal.fire({
                     title: "Thêm mới phiên bản kiểm tra thất bại",
-                    text: "Vui lòng thử lại sau!",
+                    text: "Vui lòng kiểm tra thông tin!",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger"
@@ -83,7 +83,14 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
             getData()
             handleCloseModal()
         }).catch(error => {
-            console.log(error)
+            Swal.fire({
+                title: "Thêm mới phiên bản kiểm tra thất bại",
+                text: `Có lỗi xảy ra - ${error.message}!`,
+                icon: "error",
+                customClass: {
+                    confirmButton: "btn btn-danger"
+                }
+            })
         })
     }
 
@@ -101,7 +108,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData }) => {
                         </Label>
                         <Controller
                             disabled
-                            // defaultValue={dataTitle} 
+                            defaultValue={checkingDocumentSelected?.title} 
                             name='checkingDocument'
                             control={control}
                             render={({ field }) => (
