@@ -344,10 +344,10 @@ form .col-6, .col-12 {
     padding: 8px 15px!important;
     width: 90px;
 }
-form .content-space-between {
-    padding-left: 10px;
-    padding-right: 10px;
-}
+// form .content-space-between {
+//     padding-left: 10px;
+//     padding-right: 10px;
+// }
 
 .modal-content {
     background-color: #fff!important;
@@ -440,7 +440,7 @@ form .content-space-between {
 }
 
 .dayOff:focus {
-    border-color: #4096ff;
+    border-color: #05663d;
     box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
     border-inline-end-width: 1px;
     outline: 0;
@@ -672,4 +672,17 @@ form .content-space-between {
 
 .select-custom {
     flex: 1
+}
+
+.ant-input:hover {
+    border-color: #09a863!important;
+}
+
+.ant-table-expanded-row-level-1:hover {
+    background-color: #c6eedc!important;
+}
+
+.css-t3ipsp-control:hover {
+    border-color: hsl(0, 0%, 80%)!important;
+    border-width: 0!important;
 }

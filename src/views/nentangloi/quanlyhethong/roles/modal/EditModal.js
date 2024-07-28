@@ -133,19 +133,15 @@ const EditModal = ({ open, handleModal, getData, currentPage, rowsPerPage, infoE
     <Modal
       isOpen={open}
       toggle={handleModal_}
-      contentClassName="pt-0"
       autoFocus={false}
-      className="modal-md"
+      className="modal-dialog-top modal-md"
     >
-      <ModalHeader
-        className=""
-        toggle={handleModal_}
-        close={CloseBtn}
-        tag="div"
-      >
-        <h4 className="modal-title">Chỉnh sửa vai trò</h4>
+      <ModalHeader className='bg-transparent' toggle={handleModal_}>
       </ModalHeader>
-      <ModalBody className="flex-grow-1">
+      <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+        <div className='text-center mb-1'>
+          <h2 className='mb-1'>Chỉnh sửa vai trò</h2>
+        </div>
         <Form onSubmit={handleSubmit(editRole)}>
           <Row className="content-space-between">
             <div className="mb-1 col col-12">

@@ -137,7 +137,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                 if (result.status === "success") {
                     Swal.fire({
                         title: "Thêm mới tài liệu thành công",
-                        text: "Yêu cầu đã được phê duyệt!",
+                        text: "",
                         icon: "success",
                         customClass: {
                             confirmButton: "btn btn-success"
@@ -173,7 +173,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                 if (!result.errors) {
                     Swal.fire({
                         title: "Tách câu thành công",
-                        text: "Yêu cầu đã được phê duyệt!",
+                        text: "",
                         icon: "success",
                         customClass: {
                             confirmButton: "btn btn-success"
@@ -191,16 +191,16 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
         }
     }
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-lg'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-lg'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Thêm mới tài liệu</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Thêm mới tài liệu</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col sm={12} xs={12}>
                         <Label className='form-label' for='title'>
-                            Tiêu đề <span style={{color: 'red'}}>(*)</span>
+                            Tiêu đề <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -220,7 +220,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='author'>
-                            Tác giả <span style={{color: 'red'}}>(*)</span>
+                            Tác giả <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -240,7 +240,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='coAuthor'>
-                            Đồng tác giả <span style={{color: 'red'}}>(*)</span>
+                            Đồng tác giả <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -260,7 +260,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='supervisor'>
-                            Người hướng dẫn <span style={{color: 'red'}}>(*)</span>
+                            Người hướng dẫn <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -280,7 +280,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='source'>
-                            Nguồn tài liệu <span style={{color: 'red'}}>(*)</span>
+                            Nguồn tài liệu <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             control={control}
@@ -300,7 +300,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='documentType'>
-                            Loại tài liệu <span style={{color: 'red'}}>(*)</span>
+                            Loại tài liệu <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             id="react-select"
@@ -322,7 +322,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={6} xs={12}>
                         <Label className='form-label' for='major'>
-                            Lĩnh vực <span style={{color: 'red'}}>(*)</span>
+                            Lĩnh vực <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             id='react-select'
@@ -343,7 +343,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={12} xs={12}>
                         <Label className='form-label' for='description'>
-                            Mô tả 
+                            Mô tả
                         </Label>
                         <Controller
                             name='description'
@@ -355,7 +355,7 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col sm={12} xs={12}>
                         <Label className='form-label' for='file'>
-                            Tài liệu <span style={{color: 'red'}}>(*)</span>
+                            Tài liệu <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             name='file'

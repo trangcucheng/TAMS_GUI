@@ -111,7 +111,7 @@ const Major = () => {
             ),
         },
         {
-            title: "Tên loại tài liệu",
+            title: "Tên lĩnh vực",
             dataIndex: "name",
             align: 'left',
             width: 500,
@@ -120,7 +120,7 @@ const Major = () => {
             ),
         },
         {
-            title: "Thời gian tạo",
+            title: "Ngày tạo mới",
             dataIndex: "createdAt",
             align: 'center',
             width: 150,
@@ -138,7 +138,7 @@ const Major = () => {
             ),
         },
         {
-            title: "Thao tác",
+            title: "Tác vụ",
             width: 100,
             align: "center",
             render: (record) => (
@@ -174,7 +174,7 @@ const Major = () => {
 
     return (
         <Card
-            title="Danh sách đợt kiểm tra"
+            title="Danh sách lĩnh vực"
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
             <Row style={{ justifyContent: "space-between" }}>

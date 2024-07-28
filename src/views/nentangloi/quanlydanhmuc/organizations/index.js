@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Space, Switch, TreeSelect } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Space, Switch, TreeSelect, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
   Label,
@@ -25,11 +25,13 @@ import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import classnames from "classnames"
 import { getOrganizationType } from "../../../../api/organizationTypes"
-import { getOrganizationLevel } from "../../../../api/organizationLevels"
 import { deleteOrganization, listAllOrganization, listAllOrganizationPC } from "../../../../api/organizations"
 const { SHOW_PARENT } = TreeSelect
+import AddNewModal from './modal/AddNewModal'
+import EditModal from './modal/EditModal'
 
 const ListOrganizations = () => {
+  const [loading, setLoading] = useState(true)
   const ability = useContext(AbilityContext)
   const MySwal = withReactContent(Swal)
   const [data, setData] = useState([])
@@ -40,7 +42,6 @@ const ListOrganizations = () => {
   const [isAdd, setIsAdd] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [listTypes, setListTypes] = useState([])
-  const [listLevels, setListLevels] = useState([])
   const [info, setInfo] = useState()
   const [listOrgans, setListOrgans] = useState([])
   const [value, setValue] = useState('')
@@ -60,9 +61,11 @@ const ListOrganizations = () => {
         const temp = res.fthOrg
         addAttributeToTree(temp[0], 'label', 'organizationName')
         setTreeData(temp)
+        setLoading(false)
       })
       .catch((err) => {
         console.log(err)
+        setLoading(false)
       })
   }
   useEffect(() => {
@@ -84,24 +87,6 @@ const ListOrganizations = () => {
           }
         })
         setListTypes(temp)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    getOrganizationLevel({
-      params: {
-        page: 1,
-        limit: 500,
-      },
-    })
-      .then((res) => {
-        const temp = res.list?.map((single, index) => {
-          return {
-            value: single.ID,
-            label: single.OrganizationLevelName
-          }
-        })
-        setListLevels(temp)
       })
       .catch((err) => {
         console.log(err)
@@ -399,6 +384,11 @@ const ListOrganizations = () => {
           </Col>}
       </Row>
       {
+        loading && <div className="flex" style={{width: "100%"}}>
+          <Spin />
+        </div>
+      }
+      {
         data?.length > 0 ? <Table
           key='organizationList'
           columns={columns}
@@ -430,14 +420,31 @@ const ListOrganizations = () => {
         /> : <></>
       }
 
-      <AddNewModal open={isAdd} handleModal={handleModal} getData={getData} listTypes={listTypes} setCurrentPage={setCurrentPage} listOrgans={data} currentPage={currentPage} rowsPerPage={rowsPerPage} listLevels={listLevels} treeData={treeData} />
+      <AddNewModal
+        open={isAdd}
+        handleModal={handleModal}
+        getData={getData}
+        listTypes={listTypes}
+        setCurrentPage={setCurrentPage}
+        listOrgans={data}
+        currentPage={currentPage}
+        rowsPerPage={rowsPerPage}
+        treeData={treeData} />
       {
-        <EditModal open={isEdit} handleModal={handleModal} getData={getData} infoEdit={info} listTypes={listTypes} setCurrentPage={setCurrentPage} listOrgans={data} currentPage={currentPage} rowsPerPage={rowsPerPage} listLevels={listLevels} treeData={treeData} />
+        info && <EditModal
+          open={isEdit}
+          handleModal={handleModal}
+          getData={getData}
+          infoEdit={info}
+          listTypes={listTypes}
+          setCurrentPage={setCurrentPage}
+          listOrgans={data}
+          currentPage={currentPage}
+          rowsPerPage={rowsPerPage}
+          treeData={treeData} />
       }
     </Card>
   )
 }
 
-const AddNewModal = React.lazy(() => import("./modal/AddNewModal"))
-const EditModal = React.lazy(() => import("./modal/EditModal"))
 export default ListOrganizations

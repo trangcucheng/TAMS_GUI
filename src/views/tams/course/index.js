@@ -13,7 +13,7 @@ import {
     UncontrolledTooltip,
 } from "reactstrap"
 import { Plus, X } from "react-feather"
-import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
+import { DeleteOutlined, EditOutlined, LockOutlined, UnlockOutlined } from "@ant-design/icons"
 // import style from "../../../../assets/scss/index.module.scss"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -111,30 +111,30 @@ const Course = () => {
             ),
         },
         {
-            title: "Tên đợt kiểm tra",
-            dataIndex: "name",
-            align: 'left',
-            width: 500,
-            render: (text, record, index) => (
-                <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
-            ),
-        },
-        {
-            title: "Thời gian",
-            dataIndex: "date",
-            align: 'center',
-            width: 150,
-            render: (text, record, index) => (
-                <span>{toDateString(record.date)}</span>
-            ),
-        },
-        {
-            title: "Thời gian tạo",
+            title: "Ngày tạo",
             dataIndex: "createdAt",
             align: 'center',
             width: 150,
             render: (text, record, index) => (
                 <span>{toDateTimeString(record.createdAt)}</span>
+            ),
+        },
+        {
+            title: "Tên đợt kiểm tra",
+            dataIndex: "name",
+            align: 'left',
+            width: 380,
+            render: (text, record, index) => (
+                <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
+            ),
+        },
+        {
+            title: "Ngày kiểm tra",
+            dataIndex: "date",
+            align: 'center',
+            width: 150,
+            render: (text, record, index) => (
+                <span>{toDateString(record.date)}</span>
             ),
         },
         {
@@ -147,11 +147,39 @@ const Course = () => {
             ),
         },
         {
+            title: "Trạng thái",
+            dataIndex: "isActive",
+            width: 100,
+            align: "center",
+            render: (text, record, index) => {
+                if (record?.isActive === 1) {
+                    return <Tag color="error">Đã khóa</Tag>
+                } else return <Tag color="success">Đang tiến hành</Tag>
+            },
+        },
+        {
             title: "Thao tác",
             width: 100,
             align: "center",
             render: (record) => (
                 <div style={{ display: "flex", justifyContent: "center" }}>
+                    {
+                        ability.can('update', 'TAI_KHOAN') &&
+                        <Popconfirm
+                            title={`${record.isActive === 0 ? "Bạn chắc chắn khóa đợt kiểm tra này?" : "Bạn chắc chắn mở đợt kiểm tra này?"}`}
+                            onConfirm={() => { }}
+                            cancelText="Hủy"
+                            okText="Đồng ý"
+                        >
+                            {
+                                record.isActive === 0 ? <LockOutlined
+                                    style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
+                                    /> : <UnlockOutlined
+                                    style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
+                                />
+                            }
+                        </Popconfirm>
+                    }
                     {ability.can('update', 'LOAI_DON_VI') &&
                         <>
                             <EditOutlined

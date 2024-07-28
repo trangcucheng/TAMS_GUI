@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 const ListUsers = lazy(() => import('../../views/nentangloi/quanlyhethong/users'))
 const Homepages1 = lazy(() => import('../../views/nentangloi/homepage'))
 const ListOrganizationTypes = lazy(() => import('../../views/nentangloi/quanlydanhmuc/organizationTypes'))
-const ListOrganizationLevels = lazy(() => import('../../views/nentangloi/quanlydanhmuc/organizationLevels'))
+// const ListOrganizationLevels = lazy(() => import('../../views/nentangloi/quanlydanhmuc/organizationLevels'))
 const ListOrganizations = lazy(() => import('../../views/nentangloi/quanlydanhmuc/organizations'))
 
 const CategoriesRoutes = [
@@ -23,13 +23,13 @@ const CategoriesRoutes = [
             appLayout: true
         }
     },
-    {
-        element: <ListOrganizationLevels />,
-        path: '/apps/categories/organizationLevels',
-        meta: {
-            appLayout: true
-        }
-    },
+    // {
+    //     element: <ListOrganizationLevels />,
+    //     path: '/apps/categories/organizationLevels',
+    //     meta: {
+    //         appLayout: true
+    //     }
+    // },
     {
         element: <ListOrganizations />,
         path: '/apps/categories/organizations',

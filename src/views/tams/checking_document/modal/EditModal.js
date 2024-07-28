@@ -110,7 +110,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
                 })
                 Swal.fire({
                     title: "Cập nhật kiểm tra tài liệu thành công",
-                    text: "Yêu cầu đã được phê duyệt!",
+                    text: "",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success"
@@ -133,16 +133,16 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
         })
     }
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-lg'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-lg'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Cập nhật tài liệu</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Cập nhật tài liệu</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col xs={12}>
                         <Label className='form-label' for='title'>
-                            Tiêu đề <span style={{color: 'red'}}>(*)</span>
+                            Tiêu đề <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             defaultValue={infoEdit?.title}
@@ -164,7 +164,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
                     </Col>
                     <Col xs={12}>
                         <Label className='form-label' for='course'>
-                            Đợt kiểm tra <span style={{color: 'red'}}>(*)</span>
+                            Đợt kiểm tra <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             id='react-select'
@@ -186,7 +186,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
                     </Col>
                     <Col xs={12}>
                         <Label className='form-label' for='author'>
-                            Tác giả <span style={{color: 'red'}}>(*)</span>
+                            Tác giả <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             defaultValue={infoEdit?.author}

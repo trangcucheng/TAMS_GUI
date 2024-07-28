@@ -64,7 +64,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
             if (result.status === 'success') {
                 Swal.fire({
                     title: "Thêm mới phiên bản kiểm tra thành công",
-                    text: "Yêu cầu đã được phê duyệt!",
+                    text: "",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success"
@@ -95,20 +95,20 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
     }
 
     return (
-        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-centered modal-lg'>
+        <Modal isOpen={open} toggle={handleModal} className='modal-dialog-top modal-lg'>
             <ModalHeader className='bg-transparent' toggle={handleCloseModal}></ModalHeader>
-            <ModalBody className='px-sm-5 mx-50 pb-5'>
-                <div className='text-center mb-2'>
-                    <h1 className='mb-1'>Thêm mới phiên bản kiểm tra</h1>
+            <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+                <div className='text-center mb-1'>
+                    <h2 className='mb-1'>Thêm mới phiên bản kiểm tra</h2>
                 </div>
                 <Row tag='form' className='gy-1 pt-75' onSubmit={handleSubmit(onSubmit)}>
                     <Col xs={12}>
                         <Label className='form-label' for='checkingDocument'>
-                            phiên bản kiểm tra <span style={{color: 'red'}}>(*)</span>
+                            phiên bản kiểm tra <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             disabled
-                            defaultValue={checkingDocumentSelected?.title} 
+                            defaultValue={checkingDocumentSelected?.title}
                             name='checkingDocument'
                             control={control}
                             render={({ field }) => (
@@ -130,7 +130,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
                     </Col>
                     <Col xs={12}>
                         <Label className='form-label' for='file'>
-                            Tài liệu <span style={{color: 'red'}}>(*)</span>
+                            Tài liệu <span style={{ color: 'red' }}>(*)</span>
                         </Label>
                         <Controller
                             name='file'

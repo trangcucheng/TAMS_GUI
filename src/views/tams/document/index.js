@@ -278,61 +278,63 @@ const Document = () => {
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
             <Row style={{ justifyContent: "space-between" }}>
-                <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Label
-                        className=""
-                        style={{
-                            width: "100px",
-                            fontSize: "14px",
-                            height: "34px",
-                            display: "flex",
-                            alignItems: "center",
-                        }}
-                    >
-                        Tìm kiếm
-                    </Label>
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm"
-                        style={{ height: "34px" }}
-                        onChange={(e) => {
-                            if (e.target.value === "") {
-                                setSearch("")
-                            }
-                        }}
-                        onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                                setSearch(e.target.value)
-                                setCurrentPage(1)
-                            }
-                        }}
-                    />
-                </Col>
-                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Select
-                        placeholder="Chọn khóa học"
-                        className='mb-50 select-custom'
-                        options={listCourse} isClearable
-                        onChange={(value) => handleChangeCourse(value)}
-                    />
-                </Col>
-                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Select
-                        placeholder="Chọn loại tài liệu"
-                        className='mb-50 select-custom'
-                        options={listDocumentType}
-                        isClearable
-                        onChange={(value) => handleChangeDocumentType(value)}
-                    />
-                </Col>
-                <Col sm="2" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Select
-                        placeholder="Chọn chuyên ngành"
-                        className='mb-50 select-custom'
-                        options={listMajor}
-                        isClearable
-                        onChange={(value) => handleChangeMajor(value)}
-                    />
+                <Col sm="10" style={{ display: "flex", justifyContent: "flex-start" }}>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Label
+                            className=""
+                            style={{
+                                width: "100px",
+                                fontSize: "14px",
+                                height: "34px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Tìm kiếm
+                        </Label>
+                        <Input
+                            type="text"
+                            placeholder="Tìm kiếm"
+                            style={{ height: "34px" }}
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSearch("")
+                                }
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                    setSearch(e.target.value)
+                                    setCurrentPage(1)
+                                }
+                            }}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn đợt kiểm tra"
+                            className='mb-50 select-custom'
+                            options={listCourse} isClearable
+                            onChange={(value) => handleChangeCourse(value)}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn loại tài liệu"
+                            className='mb-50 select-custom'
+                            options={listDocumentType}
+                            isClearable
+                            onChange={(value) => handleChangeDocumentType(value)}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn lĩnh vực"
+                            className='mb-50 select-custom'
+                            options={listMajor}
+                            isClearable
+                            onChange={(value) => handleChangeMajor(value)}
+                        />
+                    </Col>
                 </Col>
                 <Col sm="2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button

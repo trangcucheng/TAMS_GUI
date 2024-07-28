@@ -266,20 +266,19 @@ const ListAccounts = ({ roleSelected, open, setIsView }) => {
     <Modal
       isOpen={open}
       toggle={handleModal}
-      contentClassName="pt-0"
+      // contentClassName="pt-0"
       autoFocus={false}
-      // width="90%"
-      className="modal-xl"
+      className="modal-dialog-top modal-xl"
     >
       <ModalHeader
-        className=""
+        className='bg-transparent'
         toggle={handleModal}
-        close={CloseBtn}
-        tag="div"
       >
-        <h4 className="modal-title">Danh sách tài khoản nhóm: {roleSelected?.name}</h4>
       </ModalHeader>
-      <ModalBody className="flex-grow-1">
+      <ModalBody className='px-sm-3 mx-50 pb-2' style={{ paddingTop: 0 }}>
+        <div className='text-center mb-1'>
+          <h3 className='mb-1'>Danh sách tài khoản nhóm: {roleSelected?.name}</h3>
+        </div>
         <Row style={{ justifyContent: "space-between" }}>
           <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
             <Label

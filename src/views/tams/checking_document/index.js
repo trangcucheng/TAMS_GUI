@@ -525,7 +525,7 @@ const CheckingDocument = () => {
                     <Col md="12">
                         <Row style={{ justifyContent: "space-between" }}>
                             <Col
-                                sm="4"
+                                sm="3"
                                 style={{ display: "flex", justifyContent: "flex-end" }}
                             >
                                 <Label
@@ -558,7 +558,7 @@ const CheckingDocument = () => {
                                 />
                             </Col>
                             <Col
-                                sm="2"
+                                sm="3"
                                 style={{ display: "flex", justifyContent: "flex-start" }}
                             >
                                 <Select
@@ -570,7 +570,7 @@ const CheckingDocument = () => {
 
                             </Col>
                             <Col
-                                sm="4"
+                                sm="3"
                                 style={{ display: "flex", justifyContent: "flex-start" }}
                             >
                                 <Label
@@ -601,7 +601,7 @@ const CheckingDocument = () => {
                             </Col>
                             {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
                                 <Col
-                                    sm="2"
+                                    sm="3"
                                     style={{ display: "flex", justifyContent: "flex-end" }}
                                 >
                                     <Button
