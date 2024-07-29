@@ -23,10 +23,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 // ** Styles
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
-// import { useState } from "react"
 import { editCheckingDocumentVersion } from "../../../../api/checking_document_version"
+import { detailCheckingDocument, editCheckingDocument } from "../../../../api/checking_document"
+import { useEffect, useState } from "react"
 
-const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getData, dataCheckingDocument }) => {
+const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getData, dataCheckingDocument}) => {
     // ** States
     const EditCheckingDocumentVersionSchema = yup.object().shape({
         // file: yup.mixed().required("Yêu cầu nhập file")
@@ -48,12 +49,56 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
     //     const file = event.target.files[0]
     //     setFile(file)
     // }
+
+    const [listCheckingDocumentVersion, setListCheckingDocumentVersion] = useState([])
+
+    const getAllDataPromises = async () => {
+        const checkingDocumentVersionPromise = detailCheckingDocument(dataCheckingDocument?.id)
+
+        const promises = [checkingDocumentVersionPromise]
+        const results = await Promise.allSettled(promises)
+        const responseData = promises.reduce((acc, promise, index) => {
+            if (results[index].status === 'fulfilled') {
+                acc[index] = results[index].value
+            } else {
+                acc[index] = { error: results[index].reason }
+            }
+            return acc
+        }, [])
+
+        const checkingDocumentVersionRes = responseData[0]
+        results.map((res) => {
+            if (res.status !== 'fulfilled') {
+                setListCheckingDocumentVersion(null)
+            }
+        })
+        const checkingDocumentVersions = checkingDocumentVersionRes?.data?.checkingDocumentVersion
+        setListCheckingDocumentVersion(checkingDocumentVersions)
+    }
+
+    useEffect(() => {
+        getAllDataPromises()
+    }, [dataCheckingDocument?.id])
+
     const onSubmit = (data) => {
         const formData = new FormData()
         formData.append('description', data.description)
         formData.append('checkingDocumentId', dataCheckingDocument?.id)
         editCheckingDocumentVersion(infoEditVersion?.id, formData).then(result => {
             if (result.status === 'success') {
+                const id = listCheckingDocumentVersion[0]?.id
+                if (id === infoEditVersion?.id) {
+                    editCheckingDocument(dataCheckingDocument?.id, {
+                        title: dataCheckingDocument?.title,
+                        author: dataCheckingDocument?.author,
+                        courseId: dataCheckingDocument?.courseId,
+                        description: data.description
+                    }).then(result => {
+                       console.log(result) 
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                }
                 Swal.fire({
                     title: "Cập nhật phiên bản kiểm tra thành công",
                     text: "",

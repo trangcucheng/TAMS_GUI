@@ -49,7 +49,7 @@ import { deleteCheckingDocumentVersion, getCheckingDocumentVersion } from "../..
 import { detailCheckingDocument } from "../../../../api/checking_document"
 import EditCheckingDocumentVersion from "./EditVersionModal"
 
-const VersionModal = ({ checkingDocumentSelected }) => {
+const VersionModal = ({ checkingDocumentSelected, }) => {
     const navigate = useNavigate()
     const MySwal = withReactContent(Swal)
     const [listPerGroup, setListPerGroup] = useState([])
@@ -288,7 +288,6 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             width: 100,
             align: "center",
             render: (record) => {
-                console.log(record)
                 return (
                     <div style={{ display: "flex", justifyContent: "center" }}>
 
@@ -304,7 +303,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                         <NavLink to={`/tams/checking-result/${record.id}`}>
                             <AppstoreOutlined
                                 id={`tooltip_result_${record._id}`}
-                                style={{ color: "blue", cursor: "pointer", marginRight: '1rem' }}
+                                style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
                             // onClick={(e) => handleResult(record)}
                             />
                         </NavLink>
