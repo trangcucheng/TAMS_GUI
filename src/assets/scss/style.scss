@@ -694,3 +694,11 @@ form .col-6, .col-12 {
 .highlighted-row {
     background-color: yellow;
 }
+
+.ant-table-content .highlighted-row:hover {
+    background-color: yellow !important;
+}
+
+// .highlighted-row>td:hover {
+//     background: yellow !important;
+// }
