@@ -8,6 +8,7 @@ import {
     Switch,
     Collapse,
     Checkbox,
+    Spin,
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -31,7 +32,7 @@ import {
     EditOutlined,
     LockOutlined,
     AppstoreOutlined
-    
+
 } from "@ant-design/icons"
 import { AbilityContext } from "@src/utility/context/Can"
 //   import style from "../../../../../assets/scss/index.module.scss"
@@ -49,6 +50,7 @@ import { detailCheckingDocument } from "../../../../api/checking_document"
 import { getListSentenceByCheckingResult } from "../../../../api/checking_result"
 
 const ContentModal = ({ listSentenceByCheckingResult }) => {
+    const [loadingData, setLoadingData] = useState(false)
     const navigate = useNavigate()
     const MySwal = withReactContent(Swal)
     const [listPerGroup, setListPerGroup] = useState([])
@@ -63,15 +65,17 @@ const ContentModal = ({ listSentenceByCheckingResult }) => {
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [checkingDocumentVersionSelected, setCheckingDocumentVersionSelected] = useState()
-    console.log(listSentenceByCheckingResult)
     const getData = () => {
+        setLoadingData(true)
         getListSentenceByCheckingResult(listSentenceByCheckingResult?.id, 1)
-            .then((res) => {  
+            .then((res) => {
                 setData(res.data)
                 setCount(res?.total)
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     const handleModal = () => {
@@ -282,7 +286,7 @@ const ContentModal = ({ listSentenceByCheckingResult }) => {
             title={`Danh sách các câu trùng`}
             style={{ backgroundColor: "white", width: "100%", height: "100%" }}
         >
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -303,7 +307,7 @@ const ContentModal = ({ listSentenceByCheckingResult }) => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
         </Card>
     )
 }

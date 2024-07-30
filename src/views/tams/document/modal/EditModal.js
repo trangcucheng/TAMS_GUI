@@ -9,7 +9,8 @@ import {
   ModalBody,
   ModalHeader,
   Row,
-  Button
+  Button,
+  Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -29,6 +30,7 @@ import { Loader } from "react-feather"
 import { getMajor } from "../../../../api/major"
 import { getDocumentType } from "../../../../api/document_type"
 import classNames from "classnames"
+import { Spin } from "antd"
 
 const EditDocument = ({ open, handleModal, infoEdit, getData }) => {
   // ** States
@@ -338,7 +340,7 @@ const EditDocument = ({ open, handleModal, infoEdit, getData }) => {
           <Col xs={12} className='text-center mt-2 pt-50'>
             <Button type='submit' className='me-1' color='primary'>
               {
-                loadingEdit === true ? <Loader color="#fff" size="16px" /> : 'Cập nhật'
+                loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
               }
             </Button>
             <Button type='reset' color='secondary' outline onClick={handleModal}>

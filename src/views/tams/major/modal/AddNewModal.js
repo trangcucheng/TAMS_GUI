@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -24,6 +25,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { postMajor } from "../../../../api/major"
+import { useState } from "react"
 
 const AddNewMajor = ({ open, handleModal, getData }) => {
     // ** States
@@ -43,7 +45,7 @@ const AddNewMajor = ({ open, handleModal, getData }) => {
     })
 
     // ** State
-
+    const [loadingAdd, setLoadingAdd] = useState(false)
     const handleCloseModal = () => {
         handleModal()
         reset()
@@ -51,6 +53,7 @@ const AddNewMajor = ({ open, handleModal, getData }) => {
 
     const onSubmit = (data) => {
         // Lấy nút submit đã được nhấn
+        setLoadingAdd(true)
         postMajor(data).then(result => {
             if (result.status === 'success') {
                 Swal.fire({
@@ -84,6 +87,8 @@ const AddNewMajor = ({ open, handleModal, getData }) => {
             })
             handleCloseModal()
             getData()
+        }).finally(() => {
+            setLoadingAdd(false)
         })
     }
     return (
@@ -129,7 +134,9 @@ const AddNewMajor = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name="add" className='me-1' color='primary'>
-                            Thêm
+                            {
+                                loadingAdd === true ? <Spinner color="#fff" size="sm" /> : 'Thêm'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

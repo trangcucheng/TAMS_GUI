@@ -1,4 +1,5 @@
 // ** React Imports
+import { useState } from 'react'
 // ** Reactstrap Imports
 import {
     Col,
@@ -17,7 +18,9 @@ import Select from 'react-select'
 import { useForm, Controller } from 'react-hook-form'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
-
+import {
+    Spin
+} from 'antd'
 // ** Utils
 
 // ** Styles
@@ -43,6 +46,7 @@ const AddNewDocumentType = ({ open, handleModal, getData }) => {
     })
 
     // ** State
+    const [loadingAdd, setLoadingAdd] = useState(false)
 
     const handleCloseModal = () => {
         handleModal()
@@ -51,6 +55,7 @@ const AddNewDocumentType = ({ open, handleModal, getData }) => {
 
     const onSubmit = (data) => {
         // Lấy nút submit đã được nhấn
+        setLoadingAdd(true)
         postDocumentType(data).then(result => {
             if (result.status === 'success') {
                 Swal.fire({
@@ -82,6 +87,8 @@ const AddNewDocumentType = ({ open, handleModal, getData }) => {
                     confirmButton: "btn btn-danger"
                 }
             })
+        }).finally(() => {
+            setLoadingAdd(false)
         })
     }
     return (
@@ -126,7 +133,9 @@ const AddNewDocumentType = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name="add" className='me-1' color='primary'>
-                            Thêm
+                            {
+                                loadingAdd === true ? <Spin className="spin" /> : 'Thêm'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

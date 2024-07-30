@@ -7,7 +7,8 @@ import {
     Popconfirm,
     Switch,
     Collapse,
-    Select
+    Select,
+    Spin
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -73,6 +74,7 @@ const oneWeekAgo = new Date()
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
 const CheckingDocument = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const selected = useRef()
     const MySwal = withReactContent(Swal)
@@ -126,6 +128,7 @@ const CheckingDocument = () => {
     }
 
     const getData = (page, limit, search, courseId) => {
+        setLoadingData(true)
         getCheckingDocument({
             params: {
                 page,
@@ -143,6 +146,8 @@ const CheckingDocument = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
 
@@ -635,7 +640,7 @@ const CheckingDocument = () => {
                                 }
                             </Col>
                         </Row>
-                        <Table
+                        {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                             columns={columns}
                             dataSource={data}
                             bordered
@@ -654,7 +659,7 @@ const CheckingDocument = () => {
                                 showSizeChanger: true,
                                 showTotal: (total, range) => <span>Tổng số: {total}</span>,
                             }}
-                        />
+                        />}
                         <AddNewModal
                             open={isAdd}
                             handleModal={handleModal}

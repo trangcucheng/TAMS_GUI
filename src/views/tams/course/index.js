@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -40,6 +40,7 @@ const LIST_STATUS = [
     }
 ]
 const Course = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -51,6 +52,7 @@ const Course = () => {
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
     const getData = (page, limit, search) => {
+        setLoadingData(true)
         getCourse({
             params: {
                 page,
@@ -64,6 +66,8 @@ const Course = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
@@ -295,7 +299,7 @@ const Course = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -316,7 +320,7 @@ const Course = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}

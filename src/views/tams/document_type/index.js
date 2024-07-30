@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -27,6 +27,7 @@ import { deleteDocumentType, getDocumentType } from "../../../api/document_type"
 import { toDateString, toDateTimeString } from "../../../utility/Utils"
 
 const DocumentType = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -38,6 +39,7 @@ const DocumentType = () => {
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
     const getData = (page, limit, search) => {
+        setLoadingData(true)
         getDocumentType({
             params: {
                 page,
@@ -51,6 +53,8 @@ const DocumentType = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
@@ -221,7 +225,7 @@ const DocumentType = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -242,7 +246,7 @@ const DocumentType = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}

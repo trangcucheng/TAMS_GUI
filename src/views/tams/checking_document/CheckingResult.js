@@ -6,6 +6,8 @@ import {
     Popconfirm,
     Switch,
     Collapse,
+    Spin,
+    Select
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -22,7 +24,7 @@ import {
     CardBody,
     CardTitle,
 } from "reactstrap"
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import { Plus, X } from "react-feather"
 import {
     AppstoreAddOutlined,
@@ -35,7 +37,6 @@ import { AbilityContext } from '@src/utility/context/Can'
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import AvatarGroup from "@components/avatar-group"
-import Select from "react-select"
 import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -62,17 +63,24 @@ import { toDateString, toDateTimeString } from "../../../utility/Utils"
 // import ListPermission from './detail'
 import { deleteCheckingDocument, getCheckingDocument } from "../../../api/checking_document"
 import ContentModal from "./modal/ContentModal"
-import { getSimilarDocument } from "../../../api/checking_result"
+import { getCheckingResult, getSimilarDocument, getTop3SimilarDocument } from "../../../api/checking_result"
+import { getCourse } from "../../../api/course"
+import { PAGE_DEFAULT, PER_PAGE_DEFAULT } from "../../../utility/constant"
 
 const CheckingResult = () => {
+    const [loadingData, setLoadingData] = useState(false)
+    const [loadingData2, setLoadingData2] = useState(false)
     const ability = useContext(AbilityContext)
     const selected = useRef()
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
+    const [data2, setData2] = useState([])
     const [count, setCount] = useState(0)
+    const [count2, setCount2] = useState(0)
     const [totalUser, setTotalUser] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const [rowsPerPage, setRowsPerpage] = useState(100)
+    const [rowsPerPage, setRowsPerpage] = useState(10)
+    const [courseId, setCourseId] = useState()
     const [search, setSearch] = useState("")
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -84,10 +92,44 @@ const CheckingResult = () => {
     const [listPermissionSelected, setListPermissionSelected] = useState([])
     const [checkingDocumentSelected, setCheckingDocumentSelected] = useState()
     const [listAllRole, setListAllRole] = useState([])
-    const params = useParams()
 
+    const [listCourse, setListCourse] = useState([])
+
+    const location = useLocation()
+
+    const getAllDataPromises = async () => {
+        const coursePromise = getCourse({ params: { page: PAGE_DEFAULT, perPage: PER_PAGE_DEFAULT, search: '' } })
+
+        const promises = [coursePromise]
+        const results = await Promise.allSettled(promises)
+        const responseData = promises.reduce((acc, promise, index) => {
+            if (results[index].status === 'fulfilled') {
+                acc[index] = results[index].value
+            } else {
+                acc[index] = { error: results[index].reason }
+            }
+            return acc
+        }, [])
+
+        const courseRes = responseData[0]
+        results.map((res) => {
+            if (res.status !== 'fulfilled') {
+                setListCourse(null)
+            }
+        })
+        const courses = courseRes?.data?.map((res) => {
+            return {
+                value: res.id,
+                label: `${res.name}`
+            }
+        })
+        setListCourse(courses)
+    }
+
+    const params = useParams()
     const getData = () => {
-        getSimilarDocument(Number(params?.id))
+        setLoadingData(true)
+        getTop3SimilarDocument(Number(params?.id))
             .then((res) => {
                 const result = res?.data?.map(((item, index) => {
                     return { ...item, _id: item.id, key: index }
@@ -97,53 +139,37 @@ const CheckingResult = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
 
-    // const getInfo = () => {
-    //     getAllRolePer({
-    //         params: {
-    //             page: 1,
-    //             limit: 5000,
-    //         },
-    //     })
-    //         .then((res) => {
-    //             const { count, data } = res[0]
-    //             setListPermissionSelected(data)
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         })
-    //     getGroupPermission({
-    //         params: {
-    //             page: 1,
-    //             limit: 500,
-    //         },
-    //     })
-    //         .then((res) => {
-    //             const { count, data } = res[0]
-    //             setListPerGroup(data ?? [])
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         })
-    //     getPermission({
-    //         params: {
-    //             page: 1,
-    //             limit: 5000,
-    //         },
-    //     })
-    //         .then((res) => {
-    //             const { count, data } = res[0]
-    //             setListAllPer(data ?? [])
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         })
-    // }
+    const getDataSameCourse = (courseId) => {
+        setLoadingData2(true)
+        getSimilarDocument(Number(params?.id), {
+            params: {
+                courseId
+            }
+        })
+            .then((res) => {
+                const result = res?.data?.map(((item, index) => {
+                    return { ...item, _id: item.id, key: index }
+                }))
+                setData2(result)
+                setCount2(res?.total)
+            })
+            .catch((err) => {
+                console.log(err)
+            }).finally(() => {
+                setLoadingData2(false)
+            })
+    }
+
     useEffect(() => {
         getData()
-    }, [])
+        getDataSameCourse(courseId)
+        getAllDataPromises()
+    }, [params?.id, courseId])
 
     const handleModal = () => {
         setIsAdd(false)
@@ -192,114 +218,6 @@ const CheckingResult = () => {
                 console.log(error)
             })
     }
-
-    // const _handleSelectAll = (e) => {
-    //     let listPermitFormat = []
-    //     if (e.target.checked) {
-    //         rolesArr.map((item) => {
-    //             listPermitFormat = listPermitFormat.concat(item.actions)
-    //         })
-    //     }
-    //     setListPermissionSelected(listPermitFormat)
-    // }
-
-    // const _handleCheckRoleAction = (e, act, permission, role) => {
-    //     setListPermissionSelected((pre) => {
-    //         const isChecked = listPermissionSelected.find(
-    //             (per) => per.permissionID === permission._id &&
-    //                 per.roleID === role?._id &&
-    //                 per.actionContent === act.value
-    //         )
-    //         if (isChecked) {
-    //             if (act.value === 'read') {
-    //                 return listPermissionSelected.filter(
-    //                     (per) => !(per.permissionID === permission._id &&
-    //                         per.roleID === role?._id)
-    //                 )
-    //             }
-    //             return listPermissionSelected.filter(
-    //                 (per) => !(per.permissionID === permission._id &&
-    //                     per.roleID === role?._id &&
-    //                     per.actionContent === act.value)
-    //             )
-    //         } else {
-    //             if (act.value !== 'read') {
-    //                 const isChecked_ = listPermissionSelected.find(
-    //                     (per) => per.permissionID === permission._id &&
-    //                         per.roleID === role?._id &&
-    //                         per.actionContent === 'read'
-    //                 )
-    //                 if (isChecked_) {
-    //                     return [
-    //                         ...pre,
-    //                         {
-    //                             permissionID: permission._id,
-    //                             roleID: role._id,
-    //                             actionContent: act.value,
-    //                             isActive: 1,
-    //                         }
-    //                     ]
-    //                 } else {
-    //                     return [
-    //                         ...pre,
-    //                         {
-    //                             permissionID: permission._id,
-    //                             roleID: role._id,
-    //                             actionContent: 'read',
-    //                             isActive: 1,
-    //                         },
-    //                         {
-    //                             permissionID: permission._id,
-    //                             roleID: role._id,
-    //                             actionContent: act.value,
-    //                             isActive: 1,
-    //                         },
-    //                     ]
-    //                 }
-    //             }
-    //             return [
-    //                 ...pre,
-    //                 {
-    //                     permissionID: permission._id,
-    //                     roleID: role._id,
-    //                     actionContent: act.value,
-    //                     isActive: 1,
-    //                 },
-    //             ]
-    //         }
-    //     })
-    // }
-
-    // const _renderRoleItem = (act, ind, permission, role) => {
-    //     const permissionData = listPermissionSelected?.find(
-    //         (lstPer) => lstPer.permissionID === permission._id &&
-    //             lstPer.actionContent === act.value &&
-    //             lstPer.roleID === role?._id
-    //     )
-    //     return (
-    //         <div className="form-check me-2" key={ind} style={{ minWidth: "6rem" }}>
-    //             <Input
-    //                 type="checkbox"
-    //                 style={{ cursor: "pointer", marginRight: "1rem" }}
-    //                 className="action-cb"
-    //                 id={`${permission._id}_${act.id}`}
-    //                 checked={permissionData || false}
-    //                 onChange={(e) => _handleCheckRoleAction(e, act, permission, role)}
-    //             />
-    //             <Label
-    //                 className="form-check-label"
-    //                 style={{ cursor: "pointer", fontSize: "0.875rem" }}
-    //                 for={`${permission._id}_${act.id}`}
-    //             >
-    //                 {act.label}
-    //             </Label>
-    //         </div>
-    //     )
-    // }
-    // const handlePer = (role) => {
-    //     setRoleSelected(role)
-    //     setIsPer(true)
-    // }
 
     const rowClassName = (record) => {
         if (record.similarity > 15) {
@@ -351,11 +269,11 @@ const CheckingResult = () => {
             render: (text, record, index) => {
                 if (record?.similarity > 15) {
                     return (
-                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.author}</span>
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.document?.author}</span>
                     )
                 } else {
                     return (
-                        <span>{record?.author}</span>
+                        <span>{record?.document?.author}</span>
                     )
                 }
             }
@@ -368,11 +286,11 @@ const CheckingResult = () => {
             render: (text, record, index) => {
                 if (record?.similarity > 15) {
                     return (
-                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.course}</span>
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.document?.major}</span>
                     )
                 } else {
                     return (
-                        <span>{record?.course}</span>
+                        <span>{record?.document?.major}</span>
                     )
                 }
             }
@@ -385,11 +303,11 @@ const CheckingResult = () => {
             render: (text, record, index) => {
                 if (record?.similarity > 15) {
                     return (
-                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.documentType}</span>
+                        <span style={{ whiteSpace: 'break-spaces', color: 'red', fontWeight: '600' }}>{record?.document?.documentType?.name}</span>
                     )
                 } else {
                     return (
-                        <span>{record?.documentType}</span>
+                        <span>{record?.document?.documentType?.name}</span>
                     )
                 }
             }
@@ -458,82 +376,49 @@ const CheckingResult = () => {
         },
     ]
 
-    // const handleUpDateManyPer = () => {
-    //     const listSelected = listPermissionSelected.filter(x => x.roleID === roleSelected._id)
-    //     const arr = listSelected.map((per, index) => {
-    //         if (per.roleID === roleSelected._id) {
-    //             return {
-    //                 permissionID: per.permissionID,
-    //                 actionContent: per.actionContent,
-    //             }
-    //         }
-    //     })
-    //     const dataSubmit = {
-    //         roleID: roleSelected?._id,
-    //         isActive: 1,
-    //         arrContent: arr,
-    //         actionTime: "2023-09-13T04:08:14.369Z",
-    //     }
-    //     updateRoleManyPer(dataSubmit)
-    //         .then((res) => {
-    //             MySwal.fire({
-    //                 title: "Chỉnh sửa thành công",
-
-    //                 icon: "success",
-    //                 customClass: {
-    //                     confirmButton: "btn btn-success",
-    //                 },
-    //             }).then((result) => {
-    //                 if (currentPage === 1) {
-    //                     getData(1, rowsPerPage)
-    //                 } else {
-    //                     setCurrentPage(1)
-    //                 }
-    //                 handleModal()
-    //             })
-    //         })
-    //         .catch((err) => {
-    //             MySwal.fire({
-    //                 title: "Chỉnh sửa thất bại",
-    //                 icon: "error",
-    //                 customClass: {
-    //                     confirmButton: "btn btn-danger",
-    //                 },
-    //             })
-    //         })
-    // }
-    // const showTotal = (count) => `Tổng số: ${count}`
+    const handleChangeCourse = (value) => {
+        if (value) {
+            setCourseId(value)
+        } else {
+            setCourseId()
+        }
+    }
 
     return (
         <Fragment>
             <Card
                 title="Kết quả kiểm tra tài liệu"
                 style={{ backgroundColor: "white", width: "100%", height: "100%" }}
+                extra={
+                    <Col md="12" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
+                            <Link to="/tams/checking-document">
+                                <Button
+                                    // onClick={(e) => setIsAdd(true)}
+                                    color="primary"
+                                    className=""
+                                    style={{
+                                        width: '100px',
+                                        marginBottom: 0,
+                                        padding: '8px 15px'
+                                    }}
+                                    outline
+                                >
+                                    Quay lại
+                                </Button>
+                            </Link>
+                        }
+                    </Col>
+                }
             >
-                <Col md="12" style={{ display: "flex", justifyContent: "flex-end" }}>
-                    {ability.can('create', 'PHAN_QUYEN_VAI_TRO') &&
-                        <Link to="/tams/checking-document">
-                            <Button
-                                // onClick={(e) => setIsAdd(true)}
-                                color="primary"
-                                className="addBtn"
-                                style={{
-                                    width: '100px',
-                                }}
-                                outline
-                            >
-                                Quay lại
-                            </Button>
-                        </Link>
-                    }
-                </Col>
+
                 <Row>
                     <Col md="12" style={{ textAlign: 'center' }}>
-                        <h5>Kết quả trùng lặp so với CSDL mẫu: <span style={{ color: 'red' }}>85%</span></h5>
+                        <h5>Kết quả trùng lặp so với CSDL mẫu: <span style={{ color: 'red' }}>{location?.state?.checkingResult?.find(item => item.typeCheckingId === 1)?.similarityTotal}%</span></h5>
                     </Col>
                     <Col md="12">
                         <h6>1. Danh sách các tài liệu trùng lặp cao</h6>
-                        <Table
+                        {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                             columns={columns}
                             dataSource={data}
                             bordered
@@ -553,17 +438,18 @@ const CheckingResult = () => {
                                 showTotal: (total, range) => <span>Tổng số: {total}</span>,
                             }}
                             rowClassName={rowClassName}
-                        />
+                        />}
                     </Col>
                     <Col md="12">
                         <h6>2. Kết quả trùng lặp với các tài liệu cùng đợt kiểm tra</h6>
-                        <Table
+                        <Select options={listCourse} placeholder="Chọn đợt kiểm tra" className="mb-1" style={{ float: 'right', width: '200px' }} allowClear onChange={(value) => handleChangeCourse(value)} />
+                        {loadingData2 === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                             columns={columns}
-                            dataSource={data}
+                            dataSource={data2}
                             bordered
                             expandable={{
                                 expandedRowRender: (record) => <ContentModal
-                                    checkingDocumentSelected={record} />,
+                                    listSentenceByCheckingResult={record} />,
                                 rowExpandable: (record) => record.name !== 'Not Expandable',
                                 // expandRowByClick: true
                             }}
@@ -571,12 +457,13 @@ const CheckingResult = () => {
                                 defaultPageSize: 10,
                                 showSizeChanger: true,
                                 pageSizeOptions: ["10", "20", "30"],
-                                total: { count },
+                                total: { count2 },
                                 locale: { items_per_page: "/ trang" },
                                 showSizeChanger: true,
                                 showTotal: (total, range) => <span>Tổng số: {total}</span>,
                             }}
-                        />
+                            rowClassName={rowClassName}
+                        />}
                     </Col>
                 </Row>
             </Card>
