@@ -28,10 +28,14 @@ import "@styles/react/libs/flatpickr/flatpickr.scss"
 import Swal from 'sweetalert2'
 import { convertDateString, toDateStringv2 } from "../../../../utility/Utils"
 import { editCourse } from "../../../../api/course"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Spin } from "antd"
 
 const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditCourseSchema = yup.object().shape({
         name: yup.string().required("Yêu cầu nhập tên đợt kiểm tra")
@@ -208,7 +212,7 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
                         <Button type='submit' className='me-1' color='primary'>
                             {
                                 loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
-                            }       
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleModal}>
                             Hủy

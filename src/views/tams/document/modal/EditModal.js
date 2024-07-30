@@ -33,6 +33,10 @@ import classNames from "classnames"
 import { Spin } from "antd"
 
 const EditDocument = ({ open, handleModal, infoEdit, getData }) => {
+  if (!infoEdit) return
+  useEffect(() => {
+
+  }, [infoEdit])
   // ** States
   const EditDocumentSchema = yup.object().shape({
     file: yup.mixed().required("Yêu cầu chọn file"),

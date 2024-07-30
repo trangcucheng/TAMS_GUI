@@ -28,7 +28,11 @@ import { editCheckingDocumentVersion } from "../../../../api/checking_document_v
 import { detailCheckingDocument, editCheckingDocument } from "../../../../api/checking_document"
 import { useEffect, useState } from "react"
 
-const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getData, dataCheckingDocument}) => {
+const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getData, dataCheckingDocument }) => {
+    if (!infoEdit) return
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditCheckingDocumentVersionSchema = yup.object().shape({
         // file: yup.mixed().required("Yêu cầu nhập file")
@@ -97,7 +101,7 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
                         courseId: dataCheckingDocument?.courseId,
                         description: data.description
                     }).then(result => {
-                       console.log(result) 
+                        console.log(result)
                     }).catch(error => {
                         console.log(error)
                     })
