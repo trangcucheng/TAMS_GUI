@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -29,6 +30,7 @@ import Swal from 'sweetalert2'
 import { postCourse } from "../../../../api/course"
 import { useState } from "react"
 import { toDateStringv2 } from "../../../../utility/Utils"
+import { Spin } from "antd"
 
 const AddNewCourse = ({ open, handleModal, getData }) => {
     // ** States
@@ -49,6 +51,7 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
 
     // ** State
     const [picker, setPicker] = useState(new Date())
+    const [loadingAdd, setLoadingAdd] = useState(false)
 
     const handleCloseModal = () => {
         handleModal()
@@ -61,6 +64,7 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
 
     const onSubmit = (data) => {
         // Lấy nút submit đã được nhấn
+        setLoadingAdd(true)
         postCourse({
             name: data.name,
             date: toDateStringv2(picker),
@@ -96,6 +100,8 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
                     confirmButton: "btn btn-danger"
                 }
             })
+        }).finally(() => {
+            setLoadingAdd(false)
         })
     }
     return (
@@ -167,7 +173,9 @@ const AddNewCourse = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name="add" className='me-1' color='primary'>
-                            Thêm
+                            {
+                                loadingAdd === true ? <Spinner size="sm" color="#fff" /> : 'Thêm'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

@@ -10,7 +10,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -30,6 +31,7 @@ import { Loader } from "react-feather"
 import { getMajor } from "../../../../api/major"
 import { getDocumentType } from "../../../../api/document_type"
 import classNames from "classnames"
+import { Spin } from "antd"
 
 const AddNewDocument = ({ open, handleModal, getData }) => {
     // ** States
@@ -374,14 +376,9 @@ const AddNewDocument = ({ open, handleModal, getData }) => {
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name="add" className='me-1' color='primary'>
                             {
-                                loadingAdd === true ? <Loader color="#fff" size="16px" /> : 'Thêm'
+                                loadingAdd === true ? <Spinner color="#fff" size="sm" /> : 'Thêm'
                             }
                         </Button>
-                        {/* <Button type='submit' name="extract" className='me-1' color='success'>
-                            {
-                                loadingExtract === true ? <Loader color="#fff" size="16px" /> : 'Tách câu'
-                            }
-                        </Button> */}
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy
                         </Button>

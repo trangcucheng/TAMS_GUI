@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Select } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Select, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -31,6 +31,7 @@ import { getMajor } from "../../../api/major"
 import { type } from "jquery"
 
 const Document = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -99,6 +100,7 @@ const Document = () => {
     }
 
     const getData = (page, limit, search, courseId, typeId, majorId) => {
+        setLoadingData(true)
         getDocument({
             params: {
                 page,
@@ -115,13 +117,15 @@ const Document = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
         getData(currentPage, rowsPerPage, search, courseId, typeId, majorId)
         getAllDataPromises()
     }, [currentPage, rowsPerPage, search, courseId, typeId, majorId])
-
+    console.log(info)
 
     const handleModal = () => {
         setIsAdd(false)
@@ -245,11 +249,11 @@ const Document = () => {
                     {ability.can('update', 'LOAI_DON_VI') &&
                         <>
                             <EditOutlined
-                                id={`tooltip_edit${record.ID}`}
+                                id={`tooltip_edit${record.id}`}
                                 style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
                                 onClick={(e) => handleEdit(record)}
                             />
-                            <UncontrolledTooltip placement="top" target={`tooltip_edit${record.ID}`}>
+                            <UncontrolledTooltip placement="top" target={`tooltip_edit${record.id}`}>
                                 Chỉnh sửa
                             </UncontrolledTooltip>
                         </>}
@@ -260,8 +264,8 @@ const Document = () => {
                             cancelText="Hủy"
                             okText="Đồng ý"
                         >
-                            <DeleteOutlined style={{ color: "red", cursor: 'pointer' }} id={`tooltip_delete${record.ID}`} />
-                            <UncontrolledTooltip placement="top" target={`tooltip_delete${record.ID}`}>
+                            <DeleteOutlined style={{ color: "red", cursor: 'pointer' }} id={`tooltip_delete${record.id}`} />
+                            <UncontrolledTooltip placement="top" target={`tooltip_delete${record.id}`}>
                                 Xóa
                             </UncontrolledTooltip>
                         </Popconfirm>}
@@ -348,7 +352,7 @@ const Document = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{position: 'relative', left: '50%'}}/> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -369,7 +373,7 @@ const Document = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}

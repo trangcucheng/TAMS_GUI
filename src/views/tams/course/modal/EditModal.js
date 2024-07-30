@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -28,6 +29,7 @@ import Swal from 'sweetalert2'
 import { convertDateString, toDateStringv2 } from "../../../../utility/Utils"
 import { editCourse } from "../../../../api/course"
 import { useState } from "react"
+import { Spin } from "antd"
 
 const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
     // ** States
@@ -47,6 +49,7 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
 
     const [picker, setPicker] = useState(new Date(infoEdit?.date))
     const [isChangeDate, setIsChangeDate] = useState(false)
+    const [loadingEdit, setLoadingEdit] = useState(false)
 
     const handleChangeDate = (date) => {
         if (date) {
@@ -57,6 +60,7 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
 
     const onSubmit = data => {
         if (!isChangeDate) {
+            setLoadingEdit(true)
             editCourse(infoEdit?.id, {
                 date: infoEdit?.date,
                 name: data.name,
@@ -92,8 +96,11 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
                         confirmButton: "btn btn-danger"
                     }
                 })
+            }).finally(() => {
+                setLoadingEdit(false)
             })
         } else {
+            setLoadingEdit(true)
             editCourse(infoEdit?.id, {
                 date: toDateStringv2(picker),
                 name: data.name,
@@ -122,6 +129,8 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
                 handleModal()
             }).catch(error => {
                 console.log(error)
+            }).finally(() => {
+                setLoadingEdit(false)
             })
         }
     }
@@ -197,7 +206,9 @@ const EditCourse = ({ open, handleModal, infoEdit, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' className='me-1' color='primary'>
-                            Cập nhật
+                            {
+                                loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
+                            }       
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleModal}>
                             Hủy

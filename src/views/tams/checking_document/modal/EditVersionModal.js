@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -43,6 +44,7 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
         resolver: yupResolver(EditCheckingDocumentVersionSchema)
     })
 
+    const [loadingEdit, setLoadingEdit] = useState(false)
     // const [file, setFile] = useState()
 
     // const handleChangeFile = (event) => {
@@ -81,6 +83,7 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
     }, [dataCheckingDocument?.id])
 
     const onSubmit = (data) => {
+        setLoadingEdit(true)
         const formData = new FormData()
         formData.append('description', data.description)
         formData.append('checkingDocumentId', dataCheckingDocument?.id)
@@ -121,6 +124,8 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
             handleModal()
         }).catch(error => {
             console.log(error)
+        }).finally(() => {
+            setLoadingEdit(false)
         })
     }
     return (
@@ -178,7 +183,9 @@ const EditCheckingDocumentVersion = ({ open, handleModal, infoEditVersion, getDa
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' className='me-1' color='primary'>
-                            Cập nhật
+                            {
+                                loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleModal}>
                             Hủy
