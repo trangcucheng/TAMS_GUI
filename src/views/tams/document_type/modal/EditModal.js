@@ -24,9 +24,13 @@ import { Spin } from 'antd'
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { editDocumentType } from "../../../../api/document_type"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const EditDocumentType = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return 
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditDocumentTypeSchema = yup.object().shape({
         name: yup.string().required("Đây là trường bắt buộc")

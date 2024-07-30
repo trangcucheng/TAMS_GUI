@@ -32,6 +32,10 @@ import { detailCheckingDocumentVersion, editCheckingDocumentVersion, getChecking
 import { PAGE_DEFAULT, PER_PAGE_DEFAULT } from "../../../../utility/constant"
 
 const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditCheckingDocumentSchema = yup.object().shape({
         title: yup.string().required("Yêu cầu nhập tiêu đề"),
