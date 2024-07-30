@@ -11,7 +11,8 @@ import {
     ModalHeader,
     Row,
     Button,
-    Form
+    Form,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -52,6 +53,7 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
     // ** State
     const [file, setFile] = useState()
     const [listCourse, setListCourse] = useState([])
+    const [loadingAdd, setLoadingAdd] = useState(false)
 
     const getAllDataPromises = async () => {
         const coursePromise = getCourse({ params: { page: 1, perPage: 10, search: '' } })
@@ -99,6 +101,7 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
     }
 
     const onSubmit = (data) => {
+        setLoadingAdd(true)
         postCheckingDocument({
             title: data.title,
             author: data.author,
@@ -138,6 +141,8 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
             handleCloseModal()
         }).catch(error => {
             console.log(error)
+        }).finally(() => {
+            setLoadingAdd(false)
         })
     }
 
@@ -233,7 +238,9 @@ const AddNewCheckingDocument = ({ open, handleModal, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name='add' className='me-1' color='primary'>
-                            Thêm
+                            {
+                                loadingAdd === true ? <Spinner color="#fff" size="sm" /> : 'Thêm'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -27,6 +27,7 @@ import { deleteMajor, getMajor } from "../../../api/major"
 import { toDateString, toDateTimeString } from "../../../utility/Utils"
 
 const Major = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -38,6 +39,7 @@ const Major = () => {
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
     const getData = (page, limit, search) => {
+        setLoadingData(true)
         getMajor({
             params: {
                 page,
@@ -51,6 +53,8 @@ const Major = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
@@ -128,7 +132,7 @@ const Major = () => {
                 <span style={{ whiteSpace: 'break-spaces' }}>{record.name}</span>
             ),
         },
-     
+
         {
             title: "Mô tả",
             dataIndex: "description",
@@ -147,11 +151,11 @@ const Major = () => {
                     {ability.can('update', 'LOAI_DON_VI') &&
                         <>
                             <EditOutlined
-                                id={`tooltip_edit${record.ID}`}
+                                id={`tooltip_edit${record.id}`}
                                 style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
-                                onClick={(e) => handleEdit(record)}
+                                onClick={() => handleEdit(record)}
                             />
-                            <UncontrolledTooltip placement="top" target={`tooltip_edit${record.ID}`}>
+                            <UncontrolledTooltip placement="top" target={`tooltip_edit${record.id}`}>
                                 Chỉnh sửa
                             </UncontrolledTooltip>
                         </>}
@@ -222,7 +226,7 @@ const Major = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -243,7 +247,7 @@ const Major = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}

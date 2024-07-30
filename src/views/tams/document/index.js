@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Select } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Select, Spin } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -31,6 +31,7 @@ import { getMajor } from "../../../api/major"
 import { type } from "jquery"
 
 const Document = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -99,6 +100,7 @@ const Document = () => {
     }
 
     const getData = (page, limit, search, courseId, typeId, majorId) => {
+        setLoadingData(true)
         getDocument({
             params: {
                 page,
@@ -115,13 +117,14 @@ const Document = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
         getData(currentPage, rowsPerPage, search, courseId, typeId, majorId)
         getAllDataPromises()
     }, [currentPage, rowsPerPage, search, courseId, typeId, majorId])
-
 
     const handleModal = () => {
         setIsAdd(false)
@@ -247,7 +250,7 @@ const Document = () => {
                             <EditOutlined
                                 id={`tooltip_edit${record.ID}`}
                                 style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
-                                onClick={(e) => handleEdit(record)}
+                                onClick={() => handleEdit(record)}
                             />
                             <UncontrolledTooltip placement="top" target={`tooltip_edit${record.ID}`}>
                                 Chỉnh sửa
@@ -277,63 +280,63 @@ const Document = () => {
         >
             <Row>
                 <Col sm="10" style={{ display: "flex" }}>
-                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <Label
-                                className=""
-                                style={{
-                                    width: "100px",
-                                    fontSize: "14px",
-                                    height: "34px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                Tìm kiếm
-                            </Label>
-                            <Input
-                                type="text"
-                                placeholder="Tìm kiếm"
-                                style={{ height: "34px" }}
-                                onChange={(e) => {
-                                    if (e.target.value === "") {
-                                        setSearch("")
-                                    }
-                                }}
-                                onKeyPress={(e) => {
-                                    if (e.key === "Enter") {
-                                        setSearch(e.target.value)
-                                        setCurrentPage(1)
-                                    }
-                                }}
-                            />
-                        </Col>
-                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <Select
-                                placeholder="Chọn đợt kiểm tra"
-                                className='mb-50 select-custom'
-                                options={listCourse}
-                                allowClear
-                                onChange={(value) => handleChangeCourse(value)}
-                            />
-                        </Col>
-                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <Select
-                                placeholder="Chọn loại tài liệu"
-                                className='mb-50 select-custom'
-                                options={listDocumentType}
-                                allowClear
-                                onChange={(value) => handleChangeDocumentType(value)}
-                            />
-                        </Col>
-                        <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
-                            <Select
-                                placeholder="Chọn lĩnh vực"
-                                className='mb-50 select-custom'
-                                options={listMajor}
-                                allowClear
-                                onChange={(value) => handleChangeMajor(value)}
-                            />
-                        </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Label
+                            className=""
+                            style={{
+                                width: "100px",
+                                fontSize: "14px",
+                                height: "34px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Tìm kiếm
+                        </Label>
+                        <Input
+                            type="text"
+                            placeholder="Tìm kiếm"
+                            style={{ height: "34px" }}
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSearch("")
+                                }
+                            }}
+                            onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                    setSearch(e.target.value)
+                                    setCurrentPage(1)
+                                }
+                            }}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn đợt kiểm tra"
+                            className='mb-50 select-custom'
+                            options={listCourse}
+                            allowClear
+                            onChange={(value) => handleChangeCourse(value)}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn loại tài liệu"
+                            className='mb-50 select-custom'
+                            options={listDocumentType}
+                            allowClear
+                            onChange={(value) => handleChangeDocumentType(value)}
+                        />
+                    </Col>
+                    <Col sm="3" className="mr-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Select
+                            placeholder="Chọn lĩnh vực"
+                            className='mb-50 select-custom'
+                            options={listMajor}
+                            allowClear
+                            onChange={(value) => handleChangeMajor(value)}
+                        />
+                    </Col>
                 </Col>
                 <Col sm="2" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
@@ -348,7 +351,7 @@ const Document = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -369,7 +372,7 @@ const Document = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}
@@ -379,7 +382,7 @@ const Document = () => {
                 rowsPerPage={rowsPerPage}
             />
             {
-                <EditModal
+                info && <EditModal
                     open={isEdit}
                     handleModal={handleModal}
                     getData={getData}

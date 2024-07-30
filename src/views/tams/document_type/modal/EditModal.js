@@ -16,6 +16,7 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Spin } from 'antd'
 
 // ** Utils
 
@@ -23,12 +24,19 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { editDocumentType } from "../../../../api/document_type"
+import { useEffect, useState } from "react"
 
 const EditDocumentType = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return 
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditDocumentTypeSchema = yup.object().shape({
         name: yup.string().required("Đây là trường bắt buộc")
     })
+
+    const [loadingEdit, setLoadingEdit] = useState(false)
 
     // ** Hooks
     const {
@@ -41,6 +49,7 @@ const EditDocumentType = ({ open, handleModal, infoEdit, getData }) => {
     })
 
     const onSubmit = data => {
+        setLoadingEdit(true)
         editDocumentType(infoEdit?.id, {
             name: data.name,
             description: data.description
@@ -75,6 +84,8 @@ const EditDocumentType = ({ open, handleModal, infoEdit, getData }) => {
                     confirmButton: "btn btn-danger"
                 }
             })
+        }).finally(() => {
+            setLoadingEdit(false)
         })
     }
     return (
@@ -121,7 +132,9 @@ const EditDocumentType = ({ open, handleModal, infoEdit, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' className='me-1' color='primary'>
-                            Cập nhật
+                            {
+                                loadingEdit === true ? <Spin className="spin" /> : 'Cập nhật'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleModal}>
                             Hủy

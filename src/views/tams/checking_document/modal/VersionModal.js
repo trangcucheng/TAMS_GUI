@@ -8,6 +8,7 @@ import {
     Switch,
     Collapse,
     Checkbox,
+    Spin,
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -23,7 +24,7 @@ import {
     UncontrolledTooltip,
     CardBody,
 } from "reactstrap"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { Plus, X } from "react-feather"
 import {
     AppstoreAddOutlined,
@@ -49,7 +50,8 @@ import { deleteCheckingDocumentVersion, getCheckingDocumentVersion } from "../..
 import { detailCheckingDocument } from "../../../../api/checking_document"
 import EditCheckingDocumentVersion from "./EditVersionModal"
 
-const VersionModal = ({ checkingDocumentSelected }) => {
+const VersionModal = ({ checkingDocumentSelected, }) => {
+    const [loadingData, setLoadingData] = useState(false)
     const navigate = useNavigate()
     const MySwal = withReactContent(Swal)
     const [listPerGroup, setListPerGroup] = useState([])
@@ -66,6 +68,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
     const [checkingDocumentVersionSelected, setCheckingDocumentVersionSelected] = useState()
 
     const getData = () => {
+        setLoadingData(true)
         detailCheckingDocument(checkingDocumentSelected?.id)
             .then((res) => {
                 const result = res?.data?.checkingDocumentVersion
@@ -74,6 +77,8 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     const handleModal = () => {
@@ -88,7 +93,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
     }
 
     const handleResult = (record) => {
-        navigate(`/tams/checking-result/${record?.id}`)
+        navigate(`/tams/checking-result/${record?.id}`, { state: record })
     }
 
     // const getInfo = () => {
@@ -269,12 +274,25 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             width: 100,
         },
         {
-            title: "Phần trăm trùng",
-            dataIndex: "percentage",
+            title: "Trùng với DL mẫu (%)",
+            dataIndex: "similarityTotal",
             align: "center",
             width: 100,
             render: (text, record, index) => {
-                const listVersionResult = checkingDocumentSelected?.checkingDocumentVersion
+                return (
+                    <span>{record?.checkingResult?.find(item => item.typeCheckingId === 1)?.similarityTotal}</span>
+                )
+            }
+        },
+        {
+            title: "Trùng với TL cùng đợt (%)",
+            dataIndex: "similarityTotal",
+            align: "center",
+            width: 100,
+            render: (text, record, index) => {
+                return (
+                    <span>{record?.checkingResult?.find(item => item.typeCheckingId === 2)?.similarityTotal}</span>
+                )
             }
         },
         {
@@ -287,40 +305,44 @@ const VersionModal = ({ checkingDocumentSelected }) => {
             title: "Thao tác",
             width: 100,
             align: "center",
-            render: (record) => (
-                <div style={{ display: "flex", justifyContent: "center" }}>
+            render: (record) => {
+                return (
+                    <div style={{ display: "flex", justifyContent: "center" }}>
 
-                    <EditOutlined
-                        id={`tooltip_edit_${record._id}`}
-                        style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
-                        onClick={(e) => handleEdit(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
-                    >
-                        Chỉnh sửa
-                    </UncontrolledTooltip>
-                    <AppstoreOutlined
-                        id={`tooltip_result_${record._id}`}
-                        style={{ color: "#09a863", cursor: "pointer", marginRight: '1rem' }}
-                        onClick={(e) => handleResult(record)}
-                    />
-                    <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
-                    >
-                        Kết quả kiểm tra
-                    </UncontrolledTooltip>
-                    <Popconfirm
-                        title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record)}
-                        cancelText="Hủy"
-                        okText="Đồng ý"
-                    >
-                        <DeleteOutlined
-                            style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
+                        <EditOutlined
+                            id={`tooltip_edit_${record._id}`}
+                            style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
+                            onClick={(e) => handleEdit(record)}
                         />
-                    </Popconfirm>
+                        <UncontrolledTooltip placement="top" target={`tooltip_edit_${record._id}`}
+                        >
+                            Chỉnh sửa
+                        </UncontrolledTooltip>
+                        {/* <NavLink to={`/tams/checking-result/${record.id}`}> */}
+                        <AppstoreOutlined
+                            id={`tooltip_result_${record._id}`}
+                            style={{ color: "#09A863", cursor: "pointer", marginRight: '1rem' }}
+                            onClick={(e) => handleResult(record)}
+                        />
+                        {/* </NavLink> */}
+                        <UncontrolledTooltip placement="top" target={`tooltip_result_${record._id}`}
+                        >
+                            Kết quả kiểm tra
+                        </UncontrolledTooltip>
+                        <Popconfirm
+                            title="Bạn chắc chắn xóa?"
+                            onConfirm={() => handleDelete(record)}
+                            cancelText="Hủy"
+                            okText="Đồng ý"
+                        >
+                            <DeleteOutlined
+                                style={{ color: "red", cursor: "pointer", marginRight: '1rem' }}
+                            />
+                        </Popconfirm>
 
-                </div>
-            ),
+                    </div>
+                )
+            },
         },
     ]
 
@@ -373,7 +395,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -394,7 +416,7 @@ const VersionModal = ({ checkingDocumentSelected }) => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
             <AddNewCheckingDocumentVersion open={isAdd} handleModal={handleModal} getData={getData} rowsPerPage={rowsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} checkingDocumentSelected={checkingDocumentSelected} listSubmit={listSubmit} />
             {checkingDocumentVersionSelected && <EditCheckingDocumentVersion open={isEdit} handleModal={handleModal} getData={getData} rowsPerPage={rowsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} infoEditVersion={checkingDocumentVersionSelected} listSubmit={listSubmit} dataCheckingDocument={checkingDocumentSelected} />}
         </Card>

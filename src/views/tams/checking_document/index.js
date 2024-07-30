@@ -7,7 +7,8 @@ import {
     Popconfirm,
     Switch,
     Collapse,
-    Select
+    Select,
+    Spin
 } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
@@ -44,7 +45,7 @@ import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import classnames from "classnames"
-import { toDateString, toDateTimeString } from "../../../utility/Utils"
+import { toDateString, toDateStringv2, toDateTimeString } from "../../../utility/Utils"
 // import {
 //     getRole,
 //     createRole,
@@ -73,6 +74,7 @@ const oneWeekAgo = new Date()
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
 const CheckingDocument = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const selected = useRef()
     const MySwal = withReactContent(Swal)
@@ -83,6 +85,8 @@ const CheckingDocument = () => {
     const [rowsPerPage, setRowsPerpage] = useState(100)
     const [search, setSearch] = useState("")
     const [courseId, setCourseId] = useState()
+    const [startDate, setStartDate] = useState()
+    const [endDate, setEndDate] = useState()
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [isPer, setIsPer] = useState(false)
@@ -125,14 +129,17 @@ const CheckingDocument = () => {
         setListCourse(courses)
     }
 
-    const getData = (page, limit, search, courseId) => {
+    const getData = (page, limit, search, courseId, startDate, endDate) => {
+        setLoadingData(true)
         getCheckingDocument({
             params: {
                 page,
                 limit,
                 ...(search && search !== "" && { search }),
-                courseId
-            },
+                courseId,
+                ...(startDate && { startDate }),
+                ...(endDate && { endDate })
+            }
         })
             .then((res) => {
                 const result = res?.data?.map(((item, index) => {
@@ -143,6 +150,8 @@ const CheckingDocument = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
 
@@ -188,9 +197,11 @@ const CheckingDocument = () => {
     //         })
     // }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search, courseId)
+        if ((startDate && endDate) || (!startDate && !endDate)) {
+            getData(currentPage, rowsPerPage, search, courseId, startDate, endDate)
+        }
         getAllDataPromises()
-    }, [currentPage, rowsPerPage, search, courseId])
+    }, [currentPage, rowsPerPage, search, courseId, startDate, endDate])
 
     const handleModal = () => {
         setIsAdd(false)
@@ -214,6 +225,20 @@ const CheckingDocument = () => {
             setCourseId()
         }
     }
+
+    const handleChangeDate = (value) => {
+        if (value) {
+            setStartDate(toDateStringv2(value[0]))
+            setEndDate(toDateStringv2(value[1]))
+        } else {
+            setStartDate()
+            setEndDate()
+        }
+    }
+
+    console.log('start', startDate)
+    console.log('end', endDate)
+
     const handleViewUser = (role) => {
         setRoleSelected(role)
         setIsView(true)
@@ -617,6 +642,7 @@ const CheckingDocument = () => {
                                             defaultDate: [oneWeekAgo, new Date()]
                                         }}
                                         placeholder="dd/mm/yyyy"
+                                        onChange={(value => handleChangeDate(value))}
                                     />
                                 </Col>
                             </Col>
@@ -635,7 +661,7 @@ const CheckingDocument = () => {
                                 }
                             </Col>
                         </Row>
-                        <Table
+                        {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                             columns={columns}
                             dataSource={data}
                             bordered
@@ -654,7 +680,7 @@ const CheckingDocument = () => {
                                 showSizeChanger: true,
                                 showTotal: (total, range) => <span>Tổng số: {total}</span>,
                             }}
-                        />
+                        />}
                         <AddNewModal
                             open={isAdd}
                             handleModal={handleModal}

@@ -11,7 +11,8 @@ import {
     ModalHeader,
     Row,
     Button,
-    Form
+    Form,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -44,6 +45,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
 
     // ** State
     const [file, setFile] = useState()
+    const [loadingAdd, setLoadingAdd] = useState(false)
 
     const handleCloseModal = () => {
         handleModal()
@@ -55,7 +57,10 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
         setFile(file)
     }
 
+    console.log(checkingDocumentSelected?.courseId)
+
     const onSubmit = (data) => {
+        setLoadingAdd(true)
         const formData = new FormData()
         formData.append('file', file)
         formData.append('description', data.description)
@@ -73,7 +78,7 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
             } else {
                 Swal.fire({
                     title: "Thêm mới phiên bản kiểm tra thất bại",
-                    text: "Vui lòng kiểm tra thông tin!",
+                    text: "Không thể thêm phiên bản mới do đợt kiểm tra đã bị khóa!",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger"
@@ -91,6 +96,8 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
                     confirmButton: "btn btn-danger"
                 }
             })
+        }).finally(() => {
+            setLoadingAdd(false)
         })
     }
 
@@ -146,7 +153,9 @@ const AddNewCheckingDocumentVersion = ({ open, handleModal, getData, checkingDoc
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' name='add' className='me-1' color='primary'>
-                            Thêm
+                            {
+                                loadingAdd === true ? <Spinner color="#fff" size="sm" /> : 'Thêm'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

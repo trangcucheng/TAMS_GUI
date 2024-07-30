@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -23,12 +24,19 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import '@styles/react/libs/react-select/_react-select.scss'
 import Swal from 'sweetalert2'
 import { editMajor } from "../../../../api/major"
+import { useEffect, useState } from "react"
 
 const EditMajor = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditMajorSchema = yup.object().shape({
         name: yup.string().required("Yêu cầu nhập tên lĩnh vực")
     })
+
+    const [loadingEdit, setLoadingEdit] = useState(false)
 
     // ** Hooks
     const {
@@ -40,7 +48,10 @@ const EditMajor = ({ open, handleModal, infoEdit, getData }) => {
         resolver: yupResolver(EditMajorSchema)
     })
 
+    console.log(infoEdit)
+
     const onSubmit = data => {
+        setLoadingEdit(true)
         editMajor(infoEdit?.id, {
             name: data.name,
             description: data.description
@@ -75,6 +86,8 @@ const EditMajor = ({ open, handleModal, infoEdit, getData }) => {
                     confirmButton: "btn btn-danger"
                 }
             })
+        }).finally(() => {
+            setLoadingEdit(false)
         })
     }
     return (
@@ -121,7 +134,9 @@ const EditMajor = ({ open, handleModal, infoEdit, getData }) => {
                     </Col>
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' className='me-1' color='primary'>
-                            Cập nhật
+                            {
+                                loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleModal}>
                             Hủy

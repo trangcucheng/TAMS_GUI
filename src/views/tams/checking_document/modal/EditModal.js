@@ -9,7 +9,8 @@ import {
     ModalBody,
     ModalHeader,
     Row,
-    Button
+    Button,
+    Spinner
 } from "reactstrap"
 
 // ** Third Party Components
@@ -31,6 +32,10 @@ import { detailCheckingDocumentVersion, editCheckingDocumentVersion, getChecking
 import { PAGE_DEFAULT, PER_PAGE_DEFAULT } from "../../../../utility/constant"
 
 const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
+    if (!infoEdit) return
+    useEffect(() => {
+
+    }, [infoEdit])
     // ** States
     const EditCheckingDocumentSchema = yup.object().shape({
         title: yup.string().required("Yêu cầu nhập tiêu đề"),
@@ -50,6 +55,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
 
     const [listCourse, setListCourse] = useState([])
     const [listCheckingDocumentVersion, setListCheckingDocumentVersion] = useState([])
+    const [loadingEdit, setLoadingEdit] = useState(false)
 
     const getAllDataPromises = async () => {
         const coursePromise = getCourse({ params: { page: PAGE_DEFAULT, perPage: PER_PAGE_DEFAULT, search: '' } })
@@ -96,6 +102,7 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
     }, [open])
 
     const onSubmit = (data) => {
+        setLoadingEdit(true)
         editCheckingDocument(infoEdit?.id, {
             title: data.title,
             author: data.author,
@@ -130,6 +137,8 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
             handleCloseModal()
         }).catch(error => {
             console.log(error)
+        }).finally(() => {
+            setLoadingEdit(false)
         })
     }
     return (
@@ -228,7 +237,9 @@ const EditCheckingDocument = ({ open, handleModal, infoEdit, getData }) => {
                     </Col> */}
                     <Col xs={12} className='text-center mt-2 pt-50'>
                         <Button type='submit' className='me-1' color='primary'>
-                            Cập nhật
+                            {
+                                loadingEdit === true ? <Spinner color="#fff" size="sm" /> : 'Cập nhật'
+                            }
                         </Button>
                         <Button type='reset' color='secondary' outline onClick={handleCloseModal}>
                             Hủy

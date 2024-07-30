@@ -1,4 +1,4 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch } from "antd"
+import { Table, Input, Card, CardTitle, Tag, Popconfirm, Switch, Spin, Select } from "antd"
 import React, { useState, Fragment, useEffect, useRef, useContext } from "react"
 import {
     Label,
@@ -17,29 +17,26 @@ import { DeleteOutlined, EditOutlined, LockOutlined, UnlockOutlined } from "@ant
 // import style from "../../../../assets/scss/index.module.scss"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Select from "react-select"
+// import Select from "react-select"
 import * as yup from "yup"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import classnames from "classnames"
 import { AbilityContext } from '@src/utility/context/Can'
-import { deleteCourse, getCourse } from "../../../api/course"
+import { deleteCourse, getCourse, toggleActiveCourse } from "../../../api/course"
 import { toDateString, toDateTimeString } from "../../../utility/Utils"
 const LIST_STATUS = [
     {
-        value: "",
-        label: "Tất cả"
-    },
-    {
-        value: 0,
+        value: 1,
         label: "Đang tiến hành"
     },
     {
-        value: 1,
+        value: 2,
         label: "Bị khóa"
     }
 ]
 const Course = () => {
+    const [loadingData, setLoadingData] = useState(false)
     const ability = useContext(AbilityContext)
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -47,15 +44,18 @@ const Course = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [search, setSearch] = useState("")
+    const [isActive, setIsActive] = useState()
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [info, setInfo] = useState()
-    const getData = (page, limit, search) => {
+    const getData = (page, limit, search, isActive) => {
+        setLoadingData(true)
         getCourse({
             params: {
                 page,
                 perPage: limit,
                 ...(search && search !== "" && { search }),
+                ...(isActive && isActive !== undefined && isActive !== null && { isActive }),
             },
         })
             .then((res) => {
@@ -64,11 +64,14 @@ const Course = () => {
             })
             .catch((err) => {
                 console.log(err)
+            }).finally(() => {
+                setLoadingData(false)
             })
     }
     useEffect(() => {
-        getData(currentPage, rowsPerPage, search)
-    }, [currentPage, rowsPerPage, search])
+        console.log(isActive)
+        getData(currentPage, rowsPerPage, search, isActive)
+    }, [currentPage, rowsPerPage, search, isActive])
 
 
     const handleModal = () => {
@@ -113,6 +116,40 @@ const Course = () => {
                 console.log(error)
             })
     }
+
+    const handleIsActive = (id) => {
+        toggleActiveCourse(id).then(result => {
+            if (result.status === 'success') {
+                MySwal.fire({
+                    title: "Thay đổi trạng thái thành công",
+                    icon: "success",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                })
+            } else {
+                MySwal.fire({
+                    title: "Thay đổi trạng thái thất bại",
+                    icon: "error",
+                    customClass: {
+                        confirmButton: "btn btn-danger",
+                    },
+                })
+            }
+            getData()
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    const handleChangeStatus = (value) => {
+        if (value) {
+            setIsActive(value)
+        } else {
+            setIsActive()
+        }
+    }
+
     const columns = [
         {
             title: "STT",
@@ -166,8 +203,8 @@ const Course = () => {
             align: "center",
             render: (text, record, index) => {
                 if (record?.isActive === 1) {
-                    return <Tag color="error">Đã khóa</Tag>
-                } else return <Tag color="success">Đang tiến hành</Tag>
+                    return <Tag color="success">Đang tiến hành</Tag>
+                } else return <Tag color="error">Đã khóa</Tag>
             },
         },
         {
@@ -179,13 +216,13 @@ const Course = () => {
                     {
                         ability.can('update', 'TAI_KHOAN') &&
                         <Popconfirm
-                            title={`${record.isActive === 0 ? "Bạn chắc chắn khóa đợt kiểm tra này?" : "Bạn chắc chắn mở đợt kiểm tra này?"}`}
-                            onConfirm={() => { }}
+                            title={`${record.isActive === 1 ? "Bạn chắc chắn khóa đợt kiểm tra này?" : "Bạn chắc chắn mở đợt kiểm tra này?"}`}
+                            onConfirm={() => handleIsActive(record.id)}
                             cancelText="Hủy"
                             okText="Đồng ý"
                         >
                             {
-                                record.isActive === 0 ? <LockOutlined
+                                record.isActive === 1 ? <LockOutlined
                                     style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
                                 /> : <UnlockOutlined
                                     style={{ color: "#09A863", cursor: 'pointer', marginRight: '1rem' }}
@@ -220,7 +257,6 @@ const Course = () => {
             ),
         },
     ]
-    const showTotal = (count) => `Tổng số: ${count}`
 
     return (
         <Card
@@ -275,10 +311,9 @@ const Course = () => {
                         <Select
                             placeholder="Chọn trạng thái"
                             className='mb-50 select-custom flex-1'
-                            defaultValue={LIST_STATUS[0]}
                             options={LIST_STATUS}
                             allowClear
-                        // onChange={(value) => handleChangeCourse(value)}
+                            onChange={(value) => handleChangeStatus(value)}
                         />
                     </Col>
                 </Col>
@@ -295,7 +330,7 @@ const Course = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table
+            {loadingData === true ? <Spin style={{ position: 'relative', left: '50%' }} /> : <Table
                 columns={columns}
                 dataSource={data}
                 bordered
@@ -316,7 +351,7 @@ const Course = () => {
                         setCurrentPage(pageNumber)
                     }
                 }}
-            />
+            />}
 
             <AddNewModal
                 open={isAdd}

@@ -29,3 +29,9 @@ export const deleteCourse = async (id) => {
   const res = await API_TAMS.delete(uri)
   return res
 }
+
+export const toggleActiveCourse = async (id) => {
+  const uri = `/course/${id}/toggleIsActive`
+  const res = await API_TAMS.put(uri)
+  return res
+}
